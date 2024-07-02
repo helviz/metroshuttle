@@ -12,6 +12,6 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Maps();
+    return  const Maps();
   }
 }
