@@ -1,4 +1,4 @@
-package com.example.metroshuttle
+package com.example.metro
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -48,15 +48,15 @@ class _MapsState extends State<Maps> {
               zoomControlsEnabled: false,
             onMapCreated: (GoogleMapController controller) {
               _myMapController = controller;
-              
+
               if (_mapStyle != null) {
-                
+
                 }
                          }, initialCameraPosition:  _sourceDestination , style: _mapStyle,),
-                         
+
           ),
 
-          buildProfileTile(), 
+          buildProfileTile(),
           buildTextField(),
           buildCurrentLocationIcon(),
           buildNotificationIcon(),
@@ -71,14 +71,14 @@ Widget buildProfileTile() {
       top: 60,
       left: 20,
       right: 20,
-      child: Container( 
+      child: Container(
         child:  Row(
          children: [
-          CircleAvatar(backgroundColor: Colors.orange ,
+          const CircleAvatar(backgroundColor: Colors.orange ,
           radius: 30,),
           const SizedBox(width: 15,),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start, 
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RichText(text: const TextSpan(
                 children: [
@@ -89,7 +89,7 @@ Widget buildProfileTile() {
                   const Text('Where are you going?',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)
 
                   ]
-            
+
           )
         ],
       )
@@ -151,7 +151,7 @@ Widget buildCurrentLocationIcon() {
 Widget buildNotificationIcon() {
   return Align(
     alignment: Alignment.bottomLeft,
-    child: Padding(padding: const EdgeInsets.only(bottom: 30,left: 8), child: 
+    child: Padding(padding: const EdgeInsets.only(bottom: 30,left: 8), child:
     CircleAvatar(backgroundColor: Colors.orange, radius: 20,
     child: IconButton(onPressed: () {}, icon: const Icon(Icons.notification_add, color: Colors.white,)),),),
     );

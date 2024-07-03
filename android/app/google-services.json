@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1016983810277",
+    "project_id": "metroshuttle-a177e",
+    "storage_bucket": "metroshuttle-a177e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016983810277:android:aae16d45a83812f2f7a40c",
+        "android_client_info": {
+          "package_name": "com.example.metro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0VLOYMUTNv636dW65wYnaNWmOUc6xQKs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016983810277:android:abdb0c58c400f062f7a40c",
+        "android_client_info": {
+          "package_name": "com.example.transport"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0VLOYMUTNv636dW65wYnaNWmOUc6xQKs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
