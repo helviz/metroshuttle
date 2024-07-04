@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final countryPicker = const FlCountryCodePicker();
 
-  CountryCode countryCode = const CountryCode(name: 'Pakistan', code: "PK", dialCode: "+92");
+  CountryCode countryCode = const CountryCode(name: 'Uganda', code: "Ug", dialCode: "+256");
 
 
   onSubmit(String? input){
