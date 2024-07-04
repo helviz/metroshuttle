@@ -11,6 +11,8 @@ class AuthController extends GetxController {
   bool phoneAuthCheck = false;
   dynamic credentials;
 
+  set isDecided(bool isDecided) {}
+
 
   phoneAuth(String phone) async {
     try {

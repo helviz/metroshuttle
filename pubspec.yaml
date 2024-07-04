@@ -37,8 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.6
 
   get: ^4.6.6
-  flutter_svg: ^2.0.10+1
-  google_fonts: ^6.2.1
+  flutter_svg: 2.0.9
+  google_fonts: ^4.0.4
   fl_country_code_picker: ^0.1.9+1
 
   
