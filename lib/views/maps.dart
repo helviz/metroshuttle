@@ -37,6 +37,71 @@ class _MapsState extends State<Maps> {
 
   @override
   Widget build(BuildContext context) {
+
+    Future<String> showGoogleAutoComplete() async {
+  
+  Prediction ? p = await  PlacesAutocomplete.show(
+    context: context,
+    apiKey: "AIzaSyAGPzzZXp4o0xEnGCemV-_gGcLpJum4Hes",
+    offset: 0,
+    radius: 1000,
+    strictbounds: false,
+    region: 'us',
+    language: 'en',
+    mode: Mode.overlay,
+    components: [Component(Component.country, 'us')],
+    types: ['(cities)'],
+    hint: 'Search'
+  );
+  return p!.description!;
+    }
+
+    Widget buildTextFieldForSource() {
+    return Positioned(
+      top: 170,
+      left: 20,
+      right: 20,
+      child: Container(
+        height: 50,
+        padding: const EdgeInsets.only(left: 15),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  spreadRadius: 4,
+                  blurRadius: 10)
+            ],
+            borderRadius: BorderRadius.circular(8)),
+        child: TextFormField(
+          controller: sourceController,
+           readOnly: true,
+           onTap: () async { String selectedPlace = await showGoogleAutoComplete();
+           sourceController!.text = selectedPlace;
+           showDestinationField = true;},
+           style: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          decoration: InputDecoration(
+            hintText: 'Your location',
+            hintStyle: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            suffixIcon: const Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Icon(
+                Icons.search,
+              ),
+            ),
+            border: InputBorder.none,
+          ),
+        ),
+      ),
+    );
+  }
+
     return  Scaffold(
       body: Stack(
         children: [
@@ -56,12 +121,19 @@ class _MapsState extends State<Maps> {
 
           ),
 
-          buildProfileTile(),
-          buildTextField(context),
+          buildProfileTile(), 
+          buildTextFieldForSource(),
+          // showDestinationField ? buildTextFieldForDestination(context) : Container(),
+          buildTextFieldForDestination(context),
+
           buildCurrentLocationIcon(),
           buildNotificationIcon(),
           buildBottomSheet(),
-      ]));
+
+          
+      ]
+  ),
+  );
   }
 }
 
@@ -76,11 +148,7 @@ Widget buildProfileTile() {
         radius: 30,),
         const SizedBox(width: 15,),
         Column(
-<<<<<<< Updated upstream
-          crossAxisAlignment: CrossAxisAlignment.start, 
-=======
           crossAxisAlignment: CrossAxisAlignment.start,
->>>>>>> Stashed changes
           children: [
             RichText(text: const TextSpan(
               children: [
@@ -89,28 +157,16 @@ Widget buildProfileTile() {
                 ])),
                 const SizedBox(height: 10,),
                 const Text('Where are you going?',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)
-<<<<<<< Updated upstream
-      
-                ]
-          
-=======
 
                 ]
 
->>>>>>> Stashed changes
         )
       ],
             ));
     }
-<<<<<<< Updated upstream
-  
-Future<String> showGoogleAutoComplete(context) async {
-  
-=======
 
 Future<String> showGoogleAutoComplete(context) async {
 
->>>>>>> Stashed changes
   Prediction ? p = await  PlacesAutocomplete.show(
     context: context,
     apiKey: "AIzaSyAGPzzZXp4o0xEnGCemV-_gGcLpJum4Hes",
@@ -125,13 +181,15 @@ Future<String> showGoogleAutoComplete(context) async {
     hint: 'Search'
   );
   return p!.description!;
-
 }
 
 TextEditingController ? destinationController;
-bool showSourceField = false;
+TextEditingController ? sourceController;
+bool showDestinationField = false;
 
-Widget buildTextField(context) {
+
+
+Widget buildTextFieldForDestination(context) {
     return Positioned(
       top: 170,
       left: 20,
@@ -151,15 +209,15 @@ Widget buildTextField(context) {
         child: TextFormField(
           controller: destinationController,
            readOnly: true,
-           onTap: () async { String selectedPlace = await showGoogleAutoComplete(context);
-           destinationController!.text = selectedPlace;
-           showSourceField = true;},
-           style: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+           onTap: () { 
+            showModalBottomSheet(context: context, builder: (context) { 
+              return Container(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
+              child: const Text('Bottom Sheet'),
+            ); });
+             },
           decoration: InputDecoration(
-            hintText: 'Your location',
+            hintText: 'Select destination',
             hintStyle: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -191,11 +249,7 @@ Widget buildCurrentLocationIcon() {
 Widget buildNotificationIcon() {
   return Align(
     alignment: Alignment.bottomLeft,
-<<<<<<< Updated upstream
-    child: Padding(padding: const EdgeInsets.only(bottom: 30,left: 8), child: 
-=======
     child: Padding(padding: const EdgeInsets.only(bottom: 30,left: 8), child:
->>>>>>> Stashed changes
     CircleAvatar(backgroundColor: Colors.orange, radius: 20,
     child: IconButton(onPressed: () {}, icon: const Icon(Icons.notification_add, color: Colors.white,)),),),
     );
@@ -226,8 +280,4 @@ Widget buildBottomSheet() {
       ),
     ),
   );
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes
