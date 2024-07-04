@@ -48,15 +48,15 @@ class _MapsState extends State<Maps> {
             child: GoogleMap(
               zoomControlsEnabled: false,
             onMapCreated: (GoogleMapController controller) {
-              
+
               if (_mapStyle != null) {
-                
+
                 }
                          }, initialCameraPosition:  _sourceDestination , style: _mapStyle,),
-                         
+
           ),
 
-          buildProfileTile(), 
+          buildProfileTile(),
           buildTextField(context),
           buildCurrentLocationIcon(),
           buildNotificationIcon(),
@@ -76,7 +76,11 @@ Widget buildProfileTile() {
         radius: 30,),
         const SizedBox(width: 15,),
         Column(
+<<<<<<< Updated upstream
           crossAxisAlignment: CrossAxisAlignment.start, 
+=======
+          crossAxisAlignment: CrossAxisAlignment.start,
+>>>>>>> Stashed changes
           children: [
             RichText(text: const TextSpan(
               children: [
@@ -85,16 +89,28 @@ Widget buildProfileTile() {
                 ])),
                 const SizedBox(height: 10,),
                 const Text('Where are you going?',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)
+<<<<<<< Updated upstream
       
                 ]
           
+=======
+
+                ]
+
+>>>>>>> Stashed changes
         )
       ],
             ));
     }
+<<<<<<< Updated upstream
   
 Future<String> showGoogleAutoComplete(context) async {
   
+=======
+
+Future<String> showGoogleAutoComplete(context) async {
+
+>>>>>>> Stashed changes
   Prediction ? p = await  PlacesAutocomplete.show(
     context: context,
     apiKey: "AIzaSyAGPzzZXp4o0xEnGCemV-_gGcLpJum4Hes",
@@ -175,7 +191,11 @@ Widget buildCurrentLocationIcon() {
 Widget buildNotificationIcon() {
   return Align(
     alignment: Alignment.bottomLeft,
+<<<<<<< Updated upstream
     child: Padding(padding: const EdgeInsets.only(bottom: 30,left: 8), child: 
+=======
+    child: Padding(padding: const EdgeInsets.only(bottom: 30,left: 8), child:
+>>>>>>> Stashed changes
     CircleAvatar(backgroundColor: Colors.orange, radius: 20,
     child: IconButton(onPressed: () {}, icon: const Icon(Icons.notification_add, color: Colors.white,)),),),
     );
@@ -206,4 +226,8 @@ Widget buildBottomSheet() {
       ),
     ),
   );
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes
