@@ -26,3 +26,18 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+class _HomeScreenState extends State<HomeScreen> {
+  String? _mapStyle;
+
+  AuthController authController = Get.find<AuthController>();
+
+  late LatLng destination;
+  late LatLng source;
+  final Set<Polyline> _polyline = {};
+  Set<Marker> markers = Set<Marker>();
+  List<String> list = <String>[
+    '**** **** **** 8789',
+    '**** **** **** 8921',
+    '**** **** **** 1233',
+    '**** **** **** 4352'
+  ];
