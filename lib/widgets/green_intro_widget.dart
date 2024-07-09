@@ -3,22 +3,29 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 Widget greenIntroWidget(){
-  return Container (
+  return Container(
     width: Get.width,
-    decoration: const BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage("assets/mask.png")
-        )
+    decoration: BoxDecoration(
+      image: DecorationImage(
+        image: AssetImage('assets/mask.png'),
+        fit: BoxFit.cover
+      )
     ),
-    height: Get.height * 0.6,
+    height: Get.height*0.6,
+
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SvgPicture.asset('assets/leaf icon.svg'),
-        const SizedBox(height: 20,),
+
+          SvgPicture.asset('assets/leaf icon.svg'),
+
+          const SizedBox(
+            height: 20,
+          ),
+        
         SvgPicture.asset('assets/greenTaxi.svg')
+        
       ],
     ),
   );
@@ -27,7 +34,7 @@ Widget greenIntroWidget(){
 Widget greenIntroWidgetWithoutLogos({String title = "Profile Settings",String? subtitle}){
   return Container(
     width: Get.width,
-    decoration: const BoxDecoration(
+    decoration: BoxDecoration(
         image: DecorationImage(
             image: AssetImage('assets/mask.png'),
             fit: BoxFit.fill

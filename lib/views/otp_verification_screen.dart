@@ -3,12 +3,13 @@ import 'package:get/get.dart';
 import 'package:metroshuttle/controller/auth_controller.dart';
 import 'package:metroshuttle/utils/app_colors.dart';
 import 'package:metroshuttle/widgets/green_intro_widget.dart';
+
 import '../widgets/otp_verification_widget.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
 
   String phoneNumber;
-  OtpVerificationScreen(this.phoneNumber, {super.key});
+  OtpVerificationScreen(this.phoneNumber);
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
@@ -48,11 +49,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     child: Container(
                       width: 45,
                       height: 45,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
-                      child: const Icon(Icons.arrow_back,color: AppColors.greenColor,size: 20,),
+                      child: Icon(Icons.arrow_back,color: AppColors.greenColor,size: 20,),
                     ),
                   ),
                 ),
@@ -61,7 +62,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ],
             ),
 
-            const SizedBox(
+            SizedBox(
               height: 50,
             ),
 

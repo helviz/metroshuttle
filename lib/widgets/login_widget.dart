@@ -1,9 +1,10 @@
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:metroshuttle/utils/app_constants.dart';
+import 'package:metroshuttle/views/otp_verification_screen.dart';
 import 'package:metroshuttle/widgets/text_widget.dart';
-
 
 Widget loginWidget(CountryCode countryCode, Function onCountryChange,Function onSubmit) {
   return Padding(
@@ -44,7 +45,7 @@ Widget loginWidget(CountryCode countryCode, Function onCountryChange,Function on
 
                           Expanded(
                             child: Container(
-                              child: countryCode.flagImage(width: 25),
+                              child: countryCode.flagImage(width: 32),
                             ),
                           ),
 
@@ -52,7 +53,7 @@ Widget loginWidget(CountryCode countryCode, Function onCountryChange,Function on
 
                           // const SizedBox(width: 10,),
 
-                          const Icon(Icons.keyboard_arrow_down_rounded)
+                          Icon(Icons.keyboard_arrow_down_rounded)
                         ],
                       ),
                     ),
@@ -65,7 +66,7 @@ Widget loginWidget(CountryCode countryCode, Function onCountryChange,Function on
               Expanded(
                 flex: 3,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: TextField(
                     onSubmitted: (String? input)=> onSubmit(input),
                     decoration: InputDecoration(
@@ -89,17 +90,17 @@ Widget loginWidget(CountryCode countryCode, Function onCountryChange,Function on
             text: TextSpan(
                 style: GoogleFonts.poppins(color: Colors.black, fontSize: 12),
                 children: [
-                  const TextSpan(
-                    text: "${AppConstants.byCreating} ",
+                  TextSpan(
+                    text: AppConstants.byCreating + " ",
                   ),
                   TextSpan(
-                      text: "${AppConstants.termsOfService} ",
+                      text: AppConstants.termsOfService + " ",
                       style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-                  const TextSpan(
+                  TextSpan(
                     text: "and ",
                   ),
                   TextSpan(
-                      text: "${AppConstants.privacyPolicy} ",
+                      text: AppConstants.privacyPolicy + " ",
                       style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
                 ]),
           ),

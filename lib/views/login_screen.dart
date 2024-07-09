@@ -2,11 +2,12 @@ import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:metroshuttle/views/otp_verification_screen.dart';
+
 import '../widgets/green_intro_widget.dart';
 import '../widgets/login_widget.dart';
 
 class LoginScreen extends StatefulWidget {
-  const  LoginScreen({super.key});
+  const  LoginScreen({Key? key}) : super(key: key);
 
 
   @override
@@ -17,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final countryPicker = const FlCountryCodePicker();
 
-  CountryCode countryCode = const CountryCode(name: 'Uganda', code: "Ug", dialCode: "+256");
+  CountryCode countryCode = CountryCode(name: 'Pakistan', code: "PK", dialCode: "+92");
 
 
   onSubmit(String? input){
@@ -27,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
+      body: Container(
         width: Get.width,
         height: Get.height,
         child: SingleChildScrollView(
