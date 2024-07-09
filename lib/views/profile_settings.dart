@@ -72,6 +72,34 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                                     Icons.camera_alt_outlined,
                                     size: 40,
                                      color: Colors.white,
-                                  ),
-                                ),
-                              )
+                                  ), //Icon
+                                ), //Center
+                              ) //Container
+                            : Container(
+                          width: 120,
+                          height: 120,
+                          margin: EdgeInsets.only(bottom: 20),
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: FileImage(selectedImage!),
+                                  fit: BoxFit.fill),
+                              shape: BoxShape.circle,
+                              color: Color(0xffD6D6D6)),
+                        ),  // Container
+                      ),  // Inkwell
+                    ),    //Align
+                  ],
+                ),  //Stack
+              ),  // Container
+
+
+
+
+
+
+
+
+
+
+
+
