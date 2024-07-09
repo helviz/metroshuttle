@@ -39,3 +39,55 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
       setState(() {});
     }
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+      child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+    Container(
+    height: Get.height * 0.4,
+      child: Stack(
+        children: [
+          greenIntroWidgetWithoutLogos(),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: InkWell(
+              onTap: () {
+                getImage(ImageSource.camera);
+              },
+              child: selectedImage == null
+                  ? Container(
+                width: 120,
+                height: 120,
+                margin: EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xffD6D6D6)),
+                child: Center(
+                  child: Icon(
+                    Icons.camera_alt_outlined,
+                    size: 40,
+                    color: Colors.white,
+                  ),
+                ),
+              )
+                  : Container(
+                width: 120,
+                height: 120,
+                margin: EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: FileImage(selectedImage!),
+                        fit: BoxFit.fill),
+                    shape: BoxShape.circle,
+                    color: Color(0xffD6D6D6)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
