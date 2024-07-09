@@ -91,6 +91,37 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                   ],
                 ),  //Stack
               ),  // Container
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 23),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      TextFieldWidget(
+                          'Name', Icons.person_outlined, nameController,(String? input){
+
+                            if(input!.isEmpty){
+                              return 'Name is required!';
+                            }
+
+                            if(input.length<5){
+                              return 'Please enter a valid name!';
+                            }
+
+                            return null;
+
+                      }),
+
+
+
+
+
+
+
+
 
 
 
