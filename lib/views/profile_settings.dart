@@ -114,7 +114,50 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                             return null;
 
                       }),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFieldWidget(
+                          'Home Address', Icons.home_outlined, homeController,(String? input){
 
+                            if(input!.isEmpty){
+                              return 'Home Address is required!';
+                            }
+
+                            return null;
+
+                      },onTap: ()async{
+                        Prediction? p = await  authController.showGoogleAutoComplete(context);
+
+                        /// now let's translate this selected address and convert it to latlng obj
+
+                        homeAddress = await authController.buildLatLngFromAddress(p!.description!);
+                        homeController.text = p.description!;
+                        ///store this information into firebase together once update is clicked
+
+
+
+                      },readOnly: true),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFieldWidget('Business Address', Icons.card_travel,
+                          businessController,(String? input){
+                            if(input!.isEmpty){
+                              return 'Business Address is required!';
+                            }
+
+                            return null;
+                          },onTap: ()async{
+                            Prediction? p = await  authController.showGoogleAutoComplete(context);
+
+                           /// now let's translate this selected address and convert it to latlng obj
+
+                            businessAddress = await authController.buildLatLngFromAddress(p!.description!);
+                            businessController.text = p.description!;
+                            ///store this information into firebase together once update is clicked
+
+                          },readOnly: true),
 
 
 
