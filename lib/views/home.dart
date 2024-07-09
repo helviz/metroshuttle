@@ -41,3 +41,16 @@ class _HomeScreenState extends State<HomeScreen> {
     '**** **** **** 1233',
     '**** **** **** 4352'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    authController.getUserInfo();
+
+    rootBundle.loadString('assets/map_style.txt').then((string) {
+      _mapStyle = string;
+    });
+
+    loadCustomMarker();
+  }
