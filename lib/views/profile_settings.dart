@@ -17,3 +17,25 @@ class ProfileSettingScreen extends StatefulWidget {
   @override
   State<ProfileSettingScreen> createState() => _ProfileSettingScreenState();
 }
+
+class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController homeController = TextEditingController();
+  TextEditingController businessController = TextEditingController();
+  TextEditingController shopController = TextEditingController();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  AuthController authController = Get.find<AuthController>();
+
+  final ImagePicker _picker = ImagePicker();
+  File? selectedImage;
+
+  late LatLng homeAddress;
+  late LatLng businessAddress;
+  late LatLng shoppingAddress;
+  getImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(source: source);
+    if (image != null) {
+      selectedImage = File(image.path);
+      setState(() {});
+    }
+  }
