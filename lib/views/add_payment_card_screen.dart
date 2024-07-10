@@ -26,8 +26,6 @@ class AddPaymentCardScreenState extends State<AddPaymentCardScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
 
-
-
   @override
   void initState() {
     border = OutlineInputBorder(
@@ -70,7 +68,6 @@ class AddPaymentCardScreenState extends State<AddPaymentCardScreen> {
                   onCreditCardWidgetChange:
                       (CreditCardBrand creditCardBrand) {},
                   customCardTypeIcons: <CustomCardTypeIcon>[
-
                   ],
                 ),
                 Expanded(
@@ -128,7 +125,6 @@ class AddPaymentCardScreenState extends State<AddPaymentCardScreen> {
                         ),
 
 
-
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
 
@@ -149,15 +145,17 @@ class AddPaymentCardScreenState extends State<AddPaymentCardScreen> {
                               ),
                             ),
                           ),
-                          onPressed: ()async {
+                          onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               print('valid!');
 
 
-                              await Get.find<AuthController>().storeUserCard(cardNumber, expiryDate, cvvCode, cardHolderName);
+                              await Get.find<AuthController>().storeUserCard(
+                                  cardNumber, expiryDate, cvvCode,
+                                  cardHolderName);
 
-                              Get.snackbar('Success', 'Your card is stored successfully');
-
+                              Get.snackbar('Success',
+                                  'Your card is stored successfully');
                             } else {
                               print('invalid!');
                             }
@@ -183,3 +181,4 @@ class AddPaymentCardScreenState extends State<AddPaymentCardScreen> {
       isCvvFocused = creditCardModel.isCvvFocused;
     });
   }
+}
