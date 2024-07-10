@@ -355,5 +355,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+   late Uint8List markIcons;
+
+  loadCustomMarker() async {
+    markIcons = await loadAsset('assets/dest_marker.png', 100);
+  }
+
+  Future<Uint8List> loadAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetHeight: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
 
 }
