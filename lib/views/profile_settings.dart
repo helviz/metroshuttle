@@ -158,6 +158,65 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                             ///store this information into firebase together once update is clicked
 
                           },readOnly: true),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFieldWidget('Shopping Center',
+                          Icons.shopping_cart_outlined, shopController,(String? input){
+                            if(input!.isEmpty){
+                              return 'Shopping Center is required!';
+                            }
+
+                            return null;
+                          },onTap: ()async{
+                Prediction? p = await  authController.showGoogleAutoComplete(context);
+
+                /// now let's translate this selected address and convert it to latlng obj
+
+                shoppingAddress = await authController.buildLatLngFromAddress(p!.description!);
+                shopController.text = p.description!;
+                ///store this information into firebase together once update is clicked
+
+                },readOnly: true),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Obx(() => authController.isProfileUploading.value
+                          ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                          : greenButton('Submit', () {
+
+
+                        if(!formKey.currentState!.validate()){
+                          return;
+                        }
+
+                        if (selectedImage == null) {
+                          Get.snackbar('Warning', 'Please add your image');
+                          return;
+                        }
+                        authController.isProfileUploading(true);
+                        authController.storeUserInfo(
+                            selectedImage!,
+                            nameController.text,
+                            homeController.text,
+                            businessController.text,
+                            shopController.text,
+                            businessLatLng: businessAddress,
+                            homeLatLng: homeAddress,
+                            shoppingLatLng: shoppingAddress
+                        );
+                      })),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+    );
+  }
 
 
 
