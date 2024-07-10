@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
@@ -55,6 +56,19 @@ class AuthController extends GetxController {
     log("LoggedIn");
 
     await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  var myUser = UserModel().obs;
+
+  getUserInfo() {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .snapshots()
+        .listen((event) {
+      myUser.value = UserModel.fromJson(event.data()!);
+    });
   }
 
   Future<Prediction?> showGoogleAutoComplete(BuildContext context) async {
