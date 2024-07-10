@@ -771,5 +771,71 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 
+  buildRideConfirmationSheet() {
+    Get.bottomSheet(Container(
+      width: Get.width,
+      height: Get.height * 0.4,
+      padding: EdgeInsets.only(left: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+            topRight: Radius.circular(12), topLeft: Radius.circular(12)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: Container(
+              width: Get.width * 0.2,
+              height: 8,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8), color: Colors.grey),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          textWidget(
+              text: 'Select an option:',
+              fontSize: 18,
+              fontWeight: FontWeight.bold),
+          const SizedBox(
+            height: 20,
+          ),
+          buildDriversList(),
+          const SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Divider(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(child: buildPaymentCardWidget()),
+                MaterialButton(
+                  onPressed: () {},
+                  child: textWidget(
+                    text: 'Confirm',
+                    color: Colors.white,
+                  ),
+                  color: AppColors.greenColor,
+                  shape: StadiumBorder(),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    ));
+  }
+
+
 
 }
