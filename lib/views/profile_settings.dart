@@ -158,22 +158,133 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                             ///store this information into firebase together once update is clicked
 
                           },readOnly: true),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFieldWidget('Shopping Center',
+                          Icons.shopping_cart_outlined, shopController,(String? input){
+                            if(input!.isEmpty){
+                              return 'Shopping Center is required!';
+                            }
+
+                            return null;
+                          },onTap: ()async{
+                Prediction? p = await  authController.showGoogleAutoComplete(context);
+
+                /// now let's translate this selected address and convert it to latlng obj
+
+                shoppingAddress = await authController.buildLatLngFromAddress(p!.description!);
+                shopController.text = p.description!;
+                ///store this information into firebase together once update is clicked
+
+                },readOnly: true),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Obx(() => authController.isProfileUploading.value
+                          ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                          : greenButton('Submit', () {
 
 
+                        if(!formKey.currentState!.validate()){
+                          return;
+                        }
 
+                        if (selectedImage == null) {
+                          Get.snackbar('Warning', 'Please add your image');
+                          return;
+                        }
+                        authController.isProfileUploading(true);
+                        authController.storeUserInfo(
+                            selectedImage!,
+                            nameController.text,
+                            homeController.text,
+                            businessController.text,
+                            shopController.text,
+                            businessLatLng: businessAddress,
+                            homeLatLng: homeAddress,
+                            shoppingLatLng: shoppingAddress
+                        );
+                      })),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+    );
+  }
 
+  TextFieldWidget(
+      String title, IconData iconData, TextEditingController controller,Function validator,{Function? onTap,bool readOnly = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xffA7A7A7)),
+        ),
+        const SizedBox(
+          height: 6,
+        ),
+        Container(
+          width: Get.width,
+          // height: 50,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    spreadRadius: 1,
+                    blurRadius: 1)
+              ],
+              borderRadius: BorderRadius.circular(8)),
+          child: TextFormField(
+            readOnly: readOnly,
+            onTap: ()=> onTap!(),
+            validator: (input)=> validator(input),
+            controller: controller,
+            style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xffA7A7A7)),
+            decoration: InputDecoration(
+              prefixIcon: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Icon(
+                  iconData,
+                  color: AppColors.greenColor,
+                ),
+              ),
+              border: InputBorder.none,
+            ),
+          ),
+        )
+      ],
+    );
+  }
 
-
-
-
-
-
-
-
-
-
-
-
+  Widget greenButton(String title, Function onPressed) {
+    return MaterialButton(
+      minWidth: Get.width,
+      height: 50,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      color: AppColors.greenColor,
+      onPressed: () => onPressed(),
+      child: Text(
+        title,
+        style: GoogleFonts.poppins(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+    );
+  }
+}
 
 
 
