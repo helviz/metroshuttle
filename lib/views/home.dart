@@ -96,3 +96,71 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+   Widget buildProfileTile() {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child:  Obx(() => authController.myUser.value.name == null
+              ? Center(
+               child: CircularProgressIndicator(),
+             )
+          :  Container(
+              width: Get.width,
+              height: Get.width * 0.5,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              decoration: BoxDecoration(color: Colors.white70),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: authController.myUser.value.image == null
+                            ? DecorationImage(
+                                image: AssetImage('assets/person.png'),
+                                fit: BoxFit.fill)
+                            : DecorationImage(
+                                image: NetworkImage(
+                                    authController.myUser.value.image!),
+                                fit: BoxFit.fill)),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: 'Hello, ',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 14)),
+                          TextSpan(
+                              text: authController.myUser.value.name,
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                        ]),
+                      ),
+                      Text(
+                        "Where are you going?",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            )));
+    
+  }
