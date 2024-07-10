@@ -169,3 +169,79 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController sourceController = TextEditingController();
 
   bool showDestinationField = false;
+
+  Widget buildTextFieldForSource() {
+    return Positioned(
+      top: 170,
+      left: 20,
+      right: 20,
+      child: Container(
+        width: Get.width,
+        height: 50,
+        padding: EdgeInsets.only(left: 15),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  spreadRadius: 4,
+                  blurRadius: 10)
+            ],
+            borderRadius: BorderRadius.circular(8)),
+        child: TextFormField(
+          controller: sourceController,
+          readOnly: true,
+          onTap: () async {
+            Prediction? p =
+                await authController.showGoogleAutoComplete(context);
+
+            String selectedPlace = p!.description!;
+
+            sourceController.text = selectedPlace;
+
+            List<geoCoding.Location> locations =
+                await geoCoding.locationFromAddress(selectedPlace);
+
+            destination =
+                LatLng(locations.first.latitude, locations.first.longitude);
+
+            markers.add(Marker(
+              markerId: MarkerId(selectedPlace),
+              infoWindow: InfoWindow(
+                title: 'Location: $selectedPlace',
+              ),
+              position: destination,
+              icon: BitmapDescriptor.fromBytes(markIcons),
+            ));
+
+            myMapController!.animateCamera(CameraUpdate.newCameraPosition(
+                CameraPosition(target: destination, zoom: 14)
+                //17 is new zoom level
+                ));
+
+            setState(() {
+              showDestinationField = true;
+            });
+          },
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          decoration: InputDecoration(
+            hintText: 'Your location',
+            hintStyle: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            suffixIcon: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Icon(
+                Icons.my_location,
+              ),
+            ),
+            border: InputBorder.none,
+          ),
+        ),
+      ),
+    );
+  }
