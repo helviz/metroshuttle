@@ -164,3 +164,8 @@ class _HomeScreenState extends State<HomeScreen> {
             )));
     
   }
+
+  TextEditingController destinationController = TextEditingController();
+  TextEditingController sourceController = TextEditingController();
+
+  bool showDestinationField = false;
