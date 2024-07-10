@@ -89,6 +89,12 @@ class AuthController extends GetxController {
     return p;
   }
 
+   Future<LatLng> buildLatLngFromAddress(String place) async {
+    List<geoCoding.Location> locations =
+        await geoCoding.locationFromAddress(place);
+    return LatLng(locations.first.latitude, locations.first.longitude);
+  }
+
 
 
 }
