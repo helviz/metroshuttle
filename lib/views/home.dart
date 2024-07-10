@@ -54,3 +54,45 @@ class _HomeScreenState extends State<HomeScreen> {
 
     loadCustomMarker();
   }
+
+  String dropdownValue = '**** **** **** 8789';
+  final CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(0.347596, 32.582520 ),
+    zoom: 14.4746,
+  );
+
+  GoogleMapController? myMapController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: buildDrawer(),
+      body: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: GoogleMap(
+              markers: markers,
+              polylines: polyline,
+              zoomControlsEnabled: false,
+              onMapCreated: (GoogleMapController controller) {
+                myMapController = controller;
+
+                myMapController!.setMapStyle(_mapStyle);
+              },
+              initialCameraPosition: _kGooglePlex,
+            ),
+          ),
+          buildProfileTile(),
+          buildTextFieldForSource(),
+          showDestinationField ? buildTextFieldForDestination() : Container(),
+          buildCurrentLocationIcon(),
+          buildNotificationIcon(),
+          buildBottomSheet(),
+        ],
+      ),
+    );
+  }
