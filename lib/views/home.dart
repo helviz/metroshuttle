@@ -309,3 +309,20 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Widget buildNotificationIcon() {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 30, left: 8),
+        child: CircleAvatar(
+          radius: 20,
+          backgroundColor: Colors.white,
+          child: Icon(
+            Icons.notifications,
+            color: Color(0xffC3CDD6),
+          ),
+        ),
+      ),
+    );
+  }
