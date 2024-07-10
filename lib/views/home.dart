@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_webservice/places.dart';
 import 'package:metroshuttle/views/my_profile.dart';
+import 'package:metroshuttle/widgets/destination_widget.dart';
 
 import '../controller/auth_controller.dart';
 import '../controller/polyline_handler.dart';
