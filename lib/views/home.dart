@@ -245,3 +245,50 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Widget buildTextFieldForDestination() {
+    return Positioned(
+      top: 230,
+      left: 20,
+      right: 20,
+      child: Container(
+        width: Get.width,
+        height: 50,
+        padding: EdgeInsets.only(left: 15),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  spreadRadius: 4,
+                  blurRadius: 10)
+            ],
+            borderRadius: BorderRadius.circular(8)),
+        child: TextFormField(
+          controller: destinationController,
+          readOnly: true,
+          onTap: () async {
+            //buildSourceSheet();
+            showModalBottomSheet(context: context, builder: (BuildContext context) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 50, horizontal: 100),
+                child: DestinationWidget(),
+              );
+            });
+          },
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          decoration: InputDecoration(
+            hintText: 'Select your destination',
+            hintStyle: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            border: InputBorder.none,
+          ),
+        ),
+      ),
+    );
+  }
