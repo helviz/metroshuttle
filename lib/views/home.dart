@@ -355,7 +355,50 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-   late Uint8List markIcons;
+  
+  buildDrawerItem(
+      {required String title,
+      required Function onPressed,
+      Color color = Colors.black,
+      double fontSize = 20,
+      FontWeight fontWeight = FontWeight.w700,
+      double height = 45,
+      bool isVisible = false}) {
+    return SizedBox(
+      height: height,
+      child: ListTile(
+        contentPadding: EdgeInsets.all(0),
+        // minVerticalPadding: 0,
+        dense: true,
+        onTap: () => onPressed(),
+        title: Row(
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                  fontSize: fontSize, fontWeight: fontWeight, color: color),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            isVisible
+                ? CircleAvatar(
+                    backgroundColor: AppColors.greenColor,
+                    radius: 15,
+                    child: Text(
+                      '1',
+                      style: GoogleFonts.poppins(color: Colors.white),
+                    ),
+                  )
+                : Container()
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  late Uint8List markIcons;
 
   loadCustomMarker() async {
     markIcons = await loadAsset('assets/dest_marker.png', 100);
