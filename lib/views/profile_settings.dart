@@ -270,6 +270,21 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
     );
   }
 
+  Widget greenButton(String title, Function onPressed) {
+    return MaterialButton(
+      minWidth: Get.width,
+      height: 50,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      color: AppColors.greenColor,
+      onPressed: () => onPressed(),
+      child: Text(
+        title,
+        style: GoogleFonts.poppins(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+    );
+  }
+}
 
 
 
