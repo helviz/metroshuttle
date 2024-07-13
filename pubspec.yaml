@@ -46,6 +46,7 @@ dependencies:
   firebase_storage: ^12.1.0
   google_maps_flutter: ^2.2.0
   flutter_google_places: ^0.3.0
+  location: ^5.0.0
   google_maps_webservice:
   geocoding: ^3.0.0
   flutter_credit_card: ^3.0.4

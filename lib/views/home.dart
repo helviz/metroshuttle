@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_webservice/places.dart';
+import 'package:location/location.dart' as locationPackage;
 import 'package:metroshuttle/views/my_profile.dart';
 
 import '../controller/auth_controller.dart';
@@ -27,10 +29,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Completer<GoogleMapController> _controller = Completer();
   String? _mapStyle;
 
   AuthController authController = Get.find<AuthController>();
 
+  final locationPackage.Location _locationController =  locationPackage.Location() ;
+  late LatLng currentLocation;
   late LatLng destination;
   late LatLng source;
   final Set<Polyline> _polyline = {};
@@ -47,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     authController.getUserInfo();
+    getLocationUpdates();
 
     rootBundle.loadString('assets/map_style.txt').then((string) {
       _mapStyle = string;
@@ -80,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
               zoomControlsEnabled: false,
               onMapCreated: (GoogleMapController controller) {
                 myMapController = controller;
+                _controller.complete(controller);
 
                 myMapController!.setMapStyle(_mapStyle);
               },
