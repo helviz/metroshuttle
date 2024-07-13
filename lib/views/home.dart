@@ -602,7 +602,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               await getPolylines(source, destination);
 
-              // drawPolyline(place);
+               drawPolyline(authController.myUser.value.hAddress!);
 
               myMapController!.animateCamera(CameraUpdate.newCameraPosition(
                   CameraPosition(target: source, zoom: 14)));
@@ -666,7 +666,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               await getPolylines(source, destination);
 
-              // drawPolyline(place);
+              drawPolyline(authController.myUser.value.bAddress!);
 
               myMapController!.animateCamera(CameraUpdate.newCameraPosition(
                   CameraPosition(target: source, zoom: 14)));
@@ -728,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               await getPolylines(source, destination);
 
-              // drawPolyline(place);
+              drawPolyline(place);
 
               myMapController!.animateCamera(CameraUpdate.newCameraPosition(
                   CameraPosition(target: source, zoom: 14)));
