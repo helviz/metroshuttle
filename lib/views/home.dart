@@ -3,13 +3,13 @@ import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_webservice/places.dart';
 import 'package:location/location.dart' as locationPackage;
+import 'package:location/location.dart';
 import 'package:metroshuttle/views/my_profile.dart';
 
 import '../controller/auth_controller.dart';
@@ -817,7 +817,7 @@ class _HomeScreenState extends State<HomeScreen> {
            markers.add(Marker(
                     markerId: MarkerId('currentLocation'),
                     infoWindow: InfoWindow(
-                      title: 'Current Location: $currentLocation',
+                      title: 'Your Location: $currentLocation',
                     ),
                     position: currentLocation));
         });
