@@ -542,8 +542,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void drawPolyline(String placeId) {
-    _polyline.clear();
-    _polyline.add(Polyline(
+    polyline.clear();
+    polyline.add(Polyline(
       polylineId: PolylineId(placeId),
       visible: true,
       points: [source, destination],
@@ -768,6 +768,16 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     ));
+  }
+
+  
+  Future<void> cameraPosition(LatLng pos) async {
+     if (myMapController != null) {
+    final GoogleMapController controller = await _controller.future;
+    CameraPosition newCameraPosition = CameraPosition(target: pos, zoom: 13);
+    await controller.animateCamera(CameraUpdate.newCameraPosition(newCameraPosition));
+    await controller.animateCamera(CameraUpdate.newCameraPosition(newCameraPosition));
+  }
   }
 
   buildRideConfirmationSheet() {
