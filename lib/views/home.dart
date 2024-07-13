@@ -276,6 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
           readOnly: true,
           onTap: () async {
             buildSourceSheet();
+            getLocationUpdates();
           },
           style: GoogleFonts.poppins(
             fontSize: 16,
@@ -785,6 +786,43 @@ class _HomeScreenState extends State<HomeScreen> {
     await controller.animateCamera(CameraUpdate.newCameraPosition(newCameraPosition));
     await controller.animateCamera(CameraUpdate.newCameraPosition(newCameraPosition));
   }
+  }
+
+  Future<void> getLocationUpdates() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await _locationController.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await _locationController.requestService();
+       if (!_serviceEnabled) {  
+      return;
+    }
+    } else{
+      return;
+    }
+
+    _permissionGranted = await _locationController.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await _locationController.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+    _locationController.onLocationChanged.listen((LocationData currentLoction) {
+      if (currentLoction != null && currentLoction != null) {
+        setState(() {
+          currentLocation = LatLng(currentLoction.latitude!, currentLoction.longitude!);
+          cameraPosition(currentLocation);
+           markers.add(Marker(
+                    markerId: MarkerId('currentLocation'),
+                    infoWindow: InfoWindow(
+                      title: 'Current Location: $currentLocation',
+                    ),
+                    position: currentLocation));
+        });
+      }
+    });
   }
 
   buildRideConfirmationSheet() {
