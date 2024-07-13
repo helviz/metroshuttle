@@ -811,19 +811,31 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     _locationController.onLocationChanged.listen((LocationData currentLoction) {
       if (currentLoction != null && currentLoction != null) {
-        setState(() {
-          currentLocation = LatLng(currentLoction.latitude!, currentLoction.longitude!);
+        currentLocation = LatLng(currentLoction.latitude!, currentLoction.longitude!);
+        _updateLocation(currentLocation).then((userLocation) {
+        setState(()  {
           cameraPosition(currentLocation);
            markers.add(Marker(
                     markerId: MarkerId('currentLocation'),
                     infoWindow: InfoWindow(
-                      title: 'Your Location: $currentLocation',
+                      title: 'Your Location: $userLocation',
                     ),
                     position: currentLocation));
         });
-      }
-    });
+        yourLocationController.text = userLocation;
+      });
+      
+  }});
   }
+
+ Future<String> _updateLocation(LatLng currentLocation) async {
+  List<Placemark> placemarks = await placemarkFromCoordinates(
+    currentLocation.latitude,
+    currentLocation.longitude,
+  );
+  Placemark place = placemarks[0];
+  return "${place.street}, ${place.locality}, ${place.country}";
+}
 
   buildRideConfirmationSheet() {
     Get.bottomSheet(Container(
