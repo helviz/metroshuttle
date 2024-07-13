@@ -553,217 +553,219 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void buildSourceSheet() {
-    Get.bottomSheet(Container(
-      width: Get.width,
-      height: Get.height * 0.5,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-          color: Colors.white),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            "Select Your Location",
-            style: TextStyle(
-                color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            "Home Address",
-            style: TextStyle(
-                color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          InkWell(
-            onTap: () async {
-              Get.back();
-              source = authController.myUser.value.homeAddress!;
-              sourceController.text = authController.myUser.value.hAddress!;
-
-              if (markers.length >= 2) {
-                markers.remove(markers.last);
-              }
-              markers.add(Marker(
-                  markerId: MarkerId(authController.myUser.value.hAddress!),
-                  infoWindow: InfoWindow(
-                    title: 'Source: ${authController.myUser.value.hAddress!}',
-                  ),
-                  position: source));
-
-              await getPolylines(source, destination);
-
-               drawPolyline(authController.myUser.value.hAddress!);
-
-              myMapController!.animateCamera(CameraUpdate.newCameraPosition(
-                  CameraPosition(target: source, zoom: 14)));
-              setState(() {});
-
-              buildRideConfirmationSheet();
-            },
-            child: Container(
-              width: Get.width,
-              height: 50,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        spreadRadius: 4,
-                        blurRadius: 10)
-                  ]),
-              child: Row(
-                children: [
-                  Text(
-                    authController.myUser.value.hAddress!,
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.start,
-                  ),
-                ],
+    Get.bottomSheet(SingleChildScrollView(
+      child: Container(
+        width: Get.width,
+        height: Get.height * 0.5,
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+            color: Colors.white),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Select Your Location",
+              style: TextStyle(
+                  color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              "Home Address",
+              style: TextStyle(
+                  color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            InkWell(
+              onTap: () async {
+                Get.back();
+                source = authController.myUser.value.homeAddress!;
+                sourceController.text = authController.myUser.value.hAddress!;
+      
+                if (markers.length >= 2) {
+                  markers.remove(markers.last);
+                }
+                markers.add(Marker(
+                    markerId: MarkerId(authController.myUser.value.hAddress!),
+                    infoWindow: InfoWindow(
+                      title: 'Source: ${authController.myUser.value.hAddress!}',
+                    ),
+                    position: source));
+      
+                await getPolylines(source, destination);
+      
+                 drawPolyline(authController.myUser.value.hAddress!);
+      
+                myMapController!.animateCamera(CameraUpdate.newCameraPosition(
+                    CameraPosition(target: source, zoom: 14)));
+                setState(() {});
+      
+                buildRideConfirmationSheet();
+              },
+              child: Container(
+                width: Get.width,
+                height: 50,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          spreadRadius: 4,
+                          blurRadius: 10)
+                    ]),
+                child: Row(
+                  children: [
+                    Text(
+                      authController.myUser.value.hAddress!,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            "Business Address",
-            style: TextStyle(
-                color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          InkWell(
-            onTap: () async {
-              Get.back();
-              source = authController.myUser.value.bussinessAddres!;
-              sourceController.text = authController.myUser.value.bAddress!;
-
-              if (markers.length >= 2) {
-                markers.remove(markers.last);
-              }
-              markers.add(Marker(
-                  markerId: MarkerId(authController.myUser.value.bAddress!),
-                  infoWindow: InfoWindow(
-                    title: 'Source: ${authController.myUser.value.bAddress!}',
-                  ),
-                  position: source));
-
-              await getPolylines(source, destination);
-
-              drawPolyline(authController.myUser.value.bAddress!);
-
-              myMapController!.animateCamera(CameraUpdate.newCameraPosition(
-                  CameraPosition(target: source, zoom: 14)));
-              setState(() {});
-
-              buildRideConfirmationSheet();
-            },
-            child: Container(
-              width: Get.width,
-              height: 50,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        spreadRadius: 4,
-                        blurRadius: 10)
-                  ]),
-              child: Row(
-                children: [
-                  Text(
-                    authController.myUser.value.bAddress!,
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.start,
-                  ),
-                ],
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              "Business Address",
+              style: TextStyle(
+                  color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            InkWell(
+              onTap: () async {
+                Get.back();
+                source = authController.myUser.value.bussinessAddres!;
+                sourceController.text = authController.myUser.value.bAddress!;
+      
+                if (markers.length >= 2) {
+                  markers.remove(markers.last);
+                }
+                markers.add(Marker(
+                    markerId: MarkerId(authController.myUser.value.bAddress!),
+                    infoWindow: InfoWindow(
+                      title: 'Source: ${authController.myUser.value.bAddress!}',
+                    ),
+                    position: source));
+      
+                await getPolylines(source, destination);
+      
+                drawPolyline(authController.myUser.value.bAddress!);
+      
+                myMapController!.animateCamera(CameraUpdate.newCameraPosition(
+                    CameraPosition(target: source, zoom: 14)));
+                setState(() {});
+      
+                buildRideConfirmationSheet();
+              },
+              child: Container(
+                width: Get.width,
+                height: 50,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          spreadRadius: 4,
+                          blurRadius: 10)
+                    ]),
+                child: Row(
+                  children: [
+                    Text(
+                      authController.myUser.value.bAddress!,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          InkWell(
-            onTap: () async {
-              Get.back();
-              Prediction? p =
-                  await authController.showGoogleAutoComplete(context);
-
-              String place = p!.description!;
-
-              sourceController.text = place;
-
-              source = await authController.buildLatLngFromAddress(place);
-
-              if (markers.length >= 2) {
-                markers.remove(markers.last);
-              }
-              markers.add(Marker(
-                  markerId: MarkerId(place),
-                  infoWindow: InfoWindow(
-                    title: 'Source: $place',
-                  ),
-                  position: source));
-
-              await getPolylines(source, destination);
-
-              drawPolyline(place);
-
-              myMapController!.animateCamera(CameraUpdate.newCameraPosition(
-                  CameraPosition(target: source, zoom: 14)));
-              setState(() {});
-              buildRideConfirmationSheet();
-            },
-            child: Container(
-              width: Get.width,
-              height: 50,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        spreadRadius: 4,
-                        blurRadius: 10)
-                  ]),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Search for Address",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600),
-                    textAlign: TextAlign.start,
-                  ),
-                ],
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () async {
+                Get.back();
+                Prediction? p =
+                    await authController.showGoogleAutoComplete(context);
+      
+                String place = p!.description!;
+      
+                sourceController.text = place;
+      
+                source = await authController.buildLatLngFromAddress(place);
+      
+                if (markers.length >= 2) {
+                  markers.remove(markers.last);
+                }
+                markers.add(Marker(
+                    markerId: MarkerId(place),
+                    infoWindow: InfoWindow(
+                      title: 'Source: $place',
+                    ),
+                    position: source));
+      
+                await getPolylines(source, destination);
+      
+                drawPolyline(place);
+      
+                myMapController!.animateCamera(CameraUpdate.newCameraPosition(
+                    CameraPosition(target: source, zoom: 14)));
+                setState(() {});
+                buildRideConfirmationSheet();
+              },
+              child: Container(
+                width: Get.width,
+                height: 50,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          spreadRadius: 4,
+                          blurRadius: 10)
+                    ]),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Search for Address",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ));
   }
