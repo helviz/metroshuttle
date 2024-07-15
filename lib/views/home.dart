@@ -619,6 +619,70 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              "Business Address",
+              style: TextStyle(
+                  color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            InkWell(
+              onTap: () async {
+                Get.back();
+                source = authController.myUser.value.bussinessAddres!;
+                sourceController.text = authController.myUser.value.bAddress!;
+      
+                if (markers.length >= 2) {
+                  markers.remove(markers.last);
+                }
+                markers.add(Marker(
+                    markerId: MarkerId(authController.myUser.value.bAddress!),
+                    infoWindow: InfoWindow(
+                      title: 'Source: ${authController.myUser.value.bAddress!}',
+                    ),
+                    position: source));
+      
+                await getPolylines(source, destination);
+      
+                 drawPolyline(authController.myUser.value.bAddress!);
+      
+                myMapController!.animateCamera(CameraUpdate.newCameraPosition(
+                    CameraPosition(target: source, zoom: 14)));
+                setState(() {});
+      
+               // buildRideConfirmationSheet();
+              },
+              child: Container(
+                width: Get.width,
+                height: 50,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          spreadRadius: 4,
+                          blurRadius: 10)
+                    ]),
+                child: Row(
+                  children: [
+                    Text(
+                      authController.myUser.value.bAddress!,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
   void buildSourceSheet() {
     Get.bottomSheet(SingleChildScrollView(
