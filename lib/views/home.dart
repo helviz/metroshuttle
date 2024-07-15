@@ -533,6 +533,29 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 
+   void buildDestinationSheet() {
+    Get.bottomSheet(SingleChildScrollView(
+      child: Container(
+        width: Get.width,
+        height: Get.height * 0.5,
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+            color: Colors.white),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Select Your Location",
+              style: TextStyle(
+                  color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+
   void buildSourceSheet() {
     Get.bottomSheet(SingleChildScrollView(
       child: Container(
