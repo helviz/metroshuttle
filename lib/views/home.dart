@@ -199,36 +199,9 @@ class _HomeScreenState extends State<HomeScreen> {
           controller: destinationController,
           readOnly: true,
           onTap: () async {
-            Prediction? p =
-                await authController.showGoogleAutoComplete(context);
-
-            String selectedPlace = p!.description!;
-
-            destinationController.text = selectedPlace;
-
-            List<geoCoding.Location> locations =
-                await geoCoding.locationFromAddress(selectedPlace);
-
-            destination =
-                LatLng(locations.first.latitude, locations.first.longitude);
-
-            markers.add(Marker(
-              markerId: MarkerId(selectedPlace),
-              infoWindow: InfoWindow(
-                title: 'Destination: $selectedPlace',
-              ),
-              position: destination,
-              icon: BitmapDescriptor.fromBytes(markIcons),
-            ));
-
-            myMapController!.animateCamera(CameraUpdate.newCameraPosition(
-                CameraPosition(target: destination, zoom: 14)
-                //17 is new zoom level
-                ));
-
-            setState(() {
-              showSourceField = true;
-            });
+            buildDestinationSheet();
+            getLocationUpdates();
+  
           },
           style: GoogleFonts.poppins(
             fontSize: 16,
