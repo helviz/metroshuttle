@@ -683,6 +683,58 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+             const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () async {
+                Get.back();
+                Prediction? p =
+                await authController.showGoogleAutoComplete(context);
+
+            String selectedPlace = p!.description!;
+
+            destinationController.text = selectedPlace;
+            
+
+            List<geoCoding.Location> locations =
+                await geoCoding.locationFromAddress(selectedPlace);
+
+            destination =
+                LatLng(locations.first.latitude, locations.first.longitude);
+
+            
+                if (markers.length >= 2) {
+                  markers.remove(markers.last);
+                }
+
+            markers.add(Marker(
+              markerId: MarkerId(selectedPlace),
+              infoWindow: InfoWindow(
+                title: 'Destination: $selectedPlace',
+              ),
+              position: destination,
+              icon: BitmapDescriptor.fromBytes(markIcons),
+            ));
+
+            myMapController!.animateCamera(CameraUpdate.newCameraPosition(
+                CameraPosition(target: destination, zoom: 14)
+                //17 is new zoom level
+                ));
+
+            setState(() {
+              showSourceField = true;
+            });
+      
+                getPolylines(source, destination);
+      
+                drawPolyline(selectedPlace);
+      
+                myMapController!.animateCamera(CameraUpdate.newCameraPosition(
+                    CameraPosition(target: source, zoom: 14)));
+                setState(() {});
+                // buildRideConfirmationSheet();
+              },
 
   void buildSourceSheet() {
     Get.bottomSheet(SingleChildScrollView(
