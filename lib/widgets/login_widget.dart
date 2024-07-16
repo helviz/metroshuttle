@@ -45,7 +45,7 @@ Widget loginWidget(CountryCode countryCode, Function onCountryChange,Function on
 
                           Expanded(
                             child: Container(
-                              child: countryCode.flagImage(width: 32),
+                              child: countryCode.flagImage,
                             ),
                           ),
 

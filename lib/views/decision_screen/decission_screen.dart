@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:metroshuttle/controller/auth_controller.dart';
-import 'package:metroshuttle/views/driver/car_registration/car_registration_template.dart';
+// import 'package:metroshuttle/views/driver/car_registration/car_registration_template.dart';
 import 'package:metroshuttle/views/login_screen.dart';
 
 import '../../widgets/green_intro_widget.dart';
