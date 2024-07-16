@@ -11,9 +11,11 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:metroshuttle/models/user_model/user_model.dart';
-import 'package:metroshuttle/views/driver/car_registration/car_registration_template.dart';
-import 'package:metroshuttle/views/home.dart';
-import 'package:metroshuttle/views/profile_settings.dart';
+import 'package:metroshuttle/views/driver/driverhome.dart';
+// import 'package:metroshuttle/views/driver/car_registration/car_registration_template.dart';
+// import 'package:metroshuttle/views/home.dart';
+import 'package:metroshuttle/views/parent/parent_homescreen.dart';
+// import 'package:metroshuttle/views/profile_settings.dart';
 import 'package:path/path.dart' as Path;
 
 import '../utils/app_constants.dart';
@@ -42,14 +44,14 @@ class AuthController extends GetxController {
 
   RxList userCards = [].obs;
 
-  getUserCards() {
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid).collection('cards')
-        .snapshots().listen((event) {
-      userCards.value = event.docs;
-    });
-  }
+  // getUserCards() {
+  //   FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(FirebaseAuth.instance.currentUser!.uid).collection('cards')
+  //       .snapshots().listen((event) {
+  //     userCards.value = event.docs;
+  //   });
+  // }
 
   phoneAuth(String phone) async {
     try {
@@ -97,54 +99,49 @@ class AuthController extends GetxController {
 
   var isDecided = false;
 
-  decideRoute() {
-    if (isDecided) {
-      return;
-    }
-    isDecided = true;
-    print("called");
-
-    ///step 1- Check user login?
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      /// step 2- Check whether user profile exists?
-
-      ///isLoginAsDriver == true means navigate it to the driver module
-
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get()
-          .then((value) {
-
-
-        ///isLoginAsDriver == true means navigate it to driver module
-
-        if(isLoginAsDriver){
-
-          if (value.exists) {
-            print("Driver HOme Screen");
-          } else {
-            Get.offAll(() => DriverProfileSetup());
-          }
-
-
-        }else{
-          if (value.exists) {
-            Get.offAll(() => HomeScreen());
-          } else {
-            Get.offAll(() => ProfileSettingScreen());
-          }
-        }
-
-
-
-      }).catchError((e) {
-        print("Error while decideRoute is $e");
-      });
-    }
+  void decideRoute() {
+  if (isDecided) {
+    return;
   }
+  isDecided = true;
+  print("called");
+
+  // Step 1: Check user login
+  User? user = FirebaseAuth.instance.currentUser;
+
+  if (user != null) {
+    String userId = user.uid; // Get the user ID
+
+    // Step 2: Check whether user profile exists
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get()
+        .then((value) {
+      if (isLoginAsDriver) {
+        if (value.exists) {
+          // Navigate to DriverHomeScreen with userId
+          Get.offAll(() => DriverHomeScreen(userId: userId));          
+        } else {
+          // Navigate to DriverProfileSetup with userId
+          Get.offAll(() => DriverProfileSetup(userId: userId));
+        }
+      } else {
+        if (value.exists) {
+          // Navigate to ParentHomeScreen
+          Get.offAll(() => ParentHomeScreen());
+        } else {
+          // Navigate to ProfileSettingScreen or handle accordingly
+          // Get.offAll(() => ProfileSettingScreen());
+          Get.offAll(() => ParentHomeScreen());
+        }
+      }
+    }).catchError((e) {
+      print("Error while decideRoute is $e");
+    });
+  }
+}
+
 
   uploadImage(File image) async {
     String imageUrl = '';
@@ -164,52 +161,52 @@ class AuthController extends GetxController {
     return imageUrl;
   }
 
-  storeUserInfo(
-      File? selectedImage,
-      String name,
-      String home,
-      String business,
-      String shop, {
-        String url = '',
-        LatLng? homeLatLng,
-        LatLng? businessLatLng,
-        LatLng? shoppingLatLng,
-      }) async {
-    String url_new = url;
-    if (selectedImage != null) {
-      url_new = await uploadImage(selectedImage);
-    }
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-    FirebaseFirestore.instance.collection('users').doc(uid).set({
-      'image': url_new,
-      'name': name,
-      'home_address': home,
-      'business_address': business,
-      'shopping_address': shop,
-      'home_latlng': GeoPoint(homeLatLng!.latitude, homeLatLng.longitude),
-      'business_latlng':
-      GeoPoint(businessLatLng!.latitude, businessLatLng.longitude),
-      'shopping_latlng':
-      GeoPoint(shoppingLatLng!.latitude, shoppingLatLng.longitude),
-    },SetOptions(merge: true)).then((value) {
-      isProfileUploading(false);
+  // storeUserInfo(
+  //     File? selectedImage,
+  //     String name,
+  //     String home,
+  //     String business,
+  //     String shop, {
+  //       String url = '',
+  //       LatLng? homeLatLng,
+  //       LatLng? businessLatLng,
+  //       LatLng? shoppingLatLng,
+  //     }) async {
+  //   String url_new = url;
+  //   if (selectedImage != null) {
+  //     url_new = await uploadImage(selectedImage);
+  //   }
+  //   String uid = FirebaseAuth.instance.currentUser!.uid;
+  //   FirebaseFirestore.instance.collection('users').doc(uid).set({
+  //     'image': url_new,
+  //     'name': name,
+  //     'home_address': home,
+  //     'business_address': business,
+  //     'shopping_address': shop,
+  //     'home_latlng': GeoPoint(homeLatLng!.latitude, homeLatLng.longitude),
+  //     'business_latlng':
+  //     GeoPoint(businessLatLng!.latitude, businessLatLng.longitude),
+  //     'shopping_latlng':
+  //     GeoPoint(shoppingLatLng!.latitude, shoppingLatLng.longitude),
+  //   },SetOptions(merge: true)).then((value) {
+  //     isProfileUploading(false);
 
-      Get.to(() => HomeScreen());
-    });
-  }
+  //     // Get.to(() => HomeScreen());
+  //   });
+  // }
 
-  var myUser = UserModel().obs;
+  // var myUser = UserModel().obs;
 
-  getUserInfo() {
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .snapshots()
-        .listen((event) {
-      myUser.value = UserModel.fromJson(event.data()!);
-    });
-  }
+  // getUserInfo() {
+  //   String uid = FirebaseAuth.instance.currentUser!.uid;
+  //   FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(uid)
+  //       .snapshots()
+  //       .listen((event) {
+  //     myUser.value = UserModel.fromJson(event.data()!);
+  //   });
+  // }
 
   Future<Prediction?> showGoogleAutoComplete(BuildContext context) async {
     Prediction? p = await PlacesAutocomplete.show(
@@ -257,7 +254,7 @@ class AuthController extends GetxController {
     },SetOptions(merge: true)).then((value) {
       isProfileUploading(false);
 
-      Get.off(()=> CarRegistrationTemplate());
+      // Get.off(()=> DriverHomeScreen());
 
 
 
@@ -266,15 +263,15 @@ class AuthController extends GetxController {
 
 
 
-  Future<bool> uploadCarEntry(Map<String,dynamic> carData)async{
-    bool isUploaded = false;
-    String uid = FirebaseAuth.instance.currentUser!.uid;
+  // Future<bool> uploadCarEntry(Map<String,dynamic> carData)async{
+  //   bool isUploaded = false;
+  //   String uid = FirebaseAuth.instance.currentUser!.uid;
 
-    await FirebaseFirestore.instance.collection('users').doc(uid).set(carData,SetOptions(merge: true));
+  //   await FirebaseFirestore.instance.collection('users').doc(uid).set(carData,SetOptions(merge: true));
 
-    isUploaded = true;
+  //   isUploaded = true;
 
-    return isUploaded;
-  }
+  //   return isUploaded;
+  // }
 
 }

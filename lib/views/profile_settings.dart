@@ -197,16 +197,16 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                           return;
                         }
                         authController.isProfileUploading(true);
-                        authController.storeUserInfo(
-                            selectedImage!,
-                            nameController.text,
-                            homeController.text,
-                            businessController.text,
-                            shopController.text,
-                            businessLatLng: businessAddress,
-                            homeLatLng: homeAddress,
-                            shoppingLatLng: shoppingAddress
-                        );
+                        // authController.storeUserInfo(
+                        //     selectedImage!,
+                        //     nameController.text,
+                        //     homeController.text,
+                        //     businessController.text,
+                        //     shopController.text,
+                        //     businessLatLng: businessAddress,
+                        //     homeLatLng: homeAddress,
+                        //     shoppingLatLng: shoppingAddress
+                        // );
                       })),
                     ],
                   ),
