@@ -22,6 +22,9 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
   final List<String> _regions = ['Central', 'Kawempe', 'Nakawa', 'Lubaga', 'Makindye'];
   DateTime? _startDate;
   DateTime? _endDate;
+  bool _isLoading = false;
+  bool _isPickupPinned = false;
+  bool _isDestinationPinned = false;
 
   @override
   void dispose() {
@@ -30,10 +33,11 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    final DateTime initialDate = DateTime.now().add(Duration(days: 1));
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
+      initialDate: initialDate,
+      firstDate: initialDate,
       lastDate: DateTime(2101),
     );
     if (picked != null) {
@@ -48,12 +52,21 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() &&
+        _pickupLocation != null &&
+        _destinationLocation != null) {
+      setState(() {
+        _isLoading = true;
+      });
+
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('User not logged in!')),
         );
+        setState(() {
+          _isLoading = false;
+        });
         return;
       }
       final userId = user.uid;
@@ -69,25 +82,41 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
       );
 
       // Save child to Firestore and retrieve document ID
-      final docRef = await FirebaseFirestore.instance.collection('children').add(child.toMap());
+      final docRef = await FirebaseFirestore.instance
+          .collection('children')
+          .add(child.toMap());
       final docId = docRef.id;
 
-      _nameController.clear();
-      setState(() {
-        _pickupLocation = null;
-        _destinationLocation = null;
-        _selectedRegion = null;
-        _startDate = null;
-        _endDate = null;
-      });
+      _resetForm();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Child information saved successfully!')),
+        SnackBar(content: Text('Almost Done, Please Select Driver')),
       );
 
       // Navigate to DriverSelectionScreen with document ID
       Get.to(() => DriverSelectionScreen(docId: docId));
+
+      setState(() {
+        _isLoading = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please complete all fields and select locations.')),
+      );
     }
+  }
+
+  void _resetForm() {
+    _nameController.clear();
+    setState(() {
+      _pickupLocation = null;
+      _destinationLocation = null;
+      _selectedRegion = null;
+      _startDate = null;
+      _endDate = null;
+      _isPickupPinned = false;
+      _isDestinationPinned = false;
+    });
   }
 
   void _navigateToLocationPicker(bool isPickup) async {
@@ -101,8 +130,10 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
       setState(() {
         if (isPickup) {
           _pickupLocation = result;
+          _isPickupPinned = true;
         } else {
           _destinationLocation = result;
+          _isDestinationPinned = true;
         }
       });
     }
@@ -111,10 +142,7 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Child Management'),
-        backgroundColor: Colors.green,
-      ),
+      appBar: AppBar(title: Text('REQUESTS MANAGEMENT')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -124,26 +152,28 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Add Child Information',
+                  'Enter the following Information',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 _buildTextField(_nameController, 'Child\'s Name'),
-                _buildLocationPicker('Pick-up Location', true),
-                _buildLocationPicker('Destination Location', false),
+                _buildLocationPicker('Pick-up Location', true, _isPickupPinned),
+                _buildLocationPicker('Destination Location', false, _isDestinationPinned),
                 _buildDropdownField(),
                 _buildDateField('Start Date', _startDate, true),
                 _buildDateField('End Date', _endDate, false),
                 SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: _submitForm,
-                      child: Text('Get Driver'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    ),
-                  ],
-                ),
+                _isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: _submitForm,
+                            child: Text('Get Driver'),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                          ),
+                        ],
+                      ),
               ],
             ),
           ),
@@ -173,7 +203,7 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
     );
   }
 
-  Widget _buildLocationPicker(String labelText, bool isPickup) {
+  Widget _buildLocationPicker(String labelText, bool isPickup, bool isPinned) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -182,12 +212,8 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
           Text(labelText, style: TextStyle(fontSize: 16)),
           ElevatedButton(
             onPressed: () => _navigateToLocationPicker(isPickup),
-            child: Text('Select Location'),
+            child: Text(isPinned ? 'PINNED' : 'PIN LOCATION'),
           ),
-          if (isPickup && _pickupLocation != null)
-            Text('Selected Location: $_pickupLocation'),
-          if (!isPickup && _destinationLocation != null)
-            Text('Selected Location: $_destinationLocation'),
         ],
       ),
     );
