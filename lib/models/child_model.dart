@@ -7,7 +7,7 @@ class Child {
   final DateTime startDate;
   final DateTime endDate;
   final String? driver; // Nullable field
-  final bool request;   // Field with default value
+  final bool? request;   // Nullable field
 
   Child({
     required this.userId,
@@ -18,7 +18,7 @@ class Child {
     required this.startDate,
     required this.endDate,
     this.driver,
-    this.request = false, // Default value
+    this.request,
   });
 
   // Convert a Child object into a Map object
@@ -47,7 +47,7 @@ class Child {
       startDate: DateTime.parse(map['startDate']),
       endDate: DateTime.parse(map['endDate']),
       driver: map['driver'],
-      request: map['request'] ?? false,
+      request: map['request'],
     );
   }
 }
