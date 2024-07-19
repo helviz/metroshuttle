@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:metroshuttle/views/decision_screen/decission_screen.dart';
 import 'package:metroshuttle/views/driver/DriverMapPage.dart';
 import 'package:metroshuttle/views/driver/RequestsPage.dart';
 import 'package:metroshuttle/views/login_screen.dart';
@@ -30,7 +31,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
   void _logout() async {
     await FirebaseAuth.instance.signOut();
-    Get.offAll(() => LoginScreen()); // Navigate to login page
+    Get.offAll(() => DecisionScreen()); // Navigate to login page
   }
 
   @override
@@ -38,18 +39,23 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Driver Home - ${widget.userId}"), // Display user ID in the app bar
         backgroundColor: Colors.green,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              _scaffoldKey.currentState?.openDrawer();
-            },
-          ),
-        ],
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+        title: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text("METROSHUTTLE"),
+            ),
+          ],
+        ),
       ),
-      drawer: SidePanel(logoutCallback: _logout), // Changed to drawer
+      drawer: SidePanel(logoutCallback: _logout),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

@@ -24,8 +24,8 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
   void initState() {
     super.initState();
     _pages = [
-      ParentsRequestPage(), // Replace with your RequestsPage widget
-      NotificationScreen(), // Replace with your NotificationScreen widget
+      ParentsRequestPage(), 
+      NotificationScreen(), 
     ];
   }
 
@@ -37,7 +37,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
 
   void _logout() async {
     await FirebaseAuth.instance.signOut();
-    Get.offAll(() => DecisionScreen()); // Navigate to login page
+    Get.offAll(() => DecisionScreen()); 
   }
 
   @override
@@ -45,7 +45,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Parent Home'),
+        title: Text('METRO SHUTTLE'),
         backgroundColor: Colors.green,
         leading: IconButton(
           icon: Icon(Icons.menu),
