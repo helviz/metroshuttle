@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
+import 'package:geolocator/geolocator.dart';
 
 class LocationPickerScreen extends StatefulWidget {
   final bool isPickup;
@@ -66,6 +67,38 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     }
   }
 
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled, do nothing.
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, do nothing.
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, do nothing.
+      return;
+    }
+
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    LatLng currentLocation = LatLng(position.latitude, position.longitude);
+
+    _mapController.animateCamera(CameraUpdate.newLatLngZoom(currentLocation, 15.0));
+    _setMarker(currentLocation);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,43 +112,56 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search for a place (e.g., schools)',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    _searchPlace(_searchController.text);
-                  },
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search for a place (e.g., schools)',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        _searchPlace(_searchController.text);
+                      },
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            child: GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(0.3476, 32.5825), // Kampala, Uganda
-                zoom: 13.0,
+              Expanded(
+                child: GoogleMap(
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(0.3476, 32.5825), // Kampala, Uganda
+                    zoom: 13.0,
+                  ),
+                  mapType: MapType.hybrid,
+                  onTap: (LatLng location) {
+                    _setMarker(location);
+                  },
+                  markers: _selectedLocation != null
+                      ? {
+                          Marker(
+                            markerId: MarkerId('selectedLocation'),
+                            position: _selectedLocation!,
+                            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+                          ),
+                        }
+                      : {},
+                ),
               ),
-              mapType: MapType.hybrid,
-              onTap: (LatLng location) {
-                _setMarker(location);
-              },
-              markers: _selectedLocation != null
-                  ? {
-                      Marker(
-                        markerId: MarkerId('selectedLocation'),
-                        position: _selectedLocation!,
-                        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-                      ),
-                    }
-                  : {},
+            ],
+          ),
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: FloatingActionButton(
+              onPressed: _getCurrentLocation,
+              child: Icon(Icons.my_location),
+              backgroundColor: Colors.green,
             ),
           ),
         ],
