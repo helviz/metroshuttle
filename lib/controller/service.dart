@@ -1,21 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:metroshuttle/models/driverRoute_model.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> copySchoolToDriverRoutes(String documentId) async {
     try {
-      // Fetch the document from the 'schools' collection
+      // Get the currently logged-in user
+      User? user = _auth.currentUser;
+
+      if (user == null) {
+        print('No user is logged in');
+        return;
+      }
+
+      String userId = user.uid;
+
+      // Fetch the document from the 'children' collection
       DocumentSnapshot schoolDoc = await _firestore.collection('children').doc(documentId).get();
 
       if (schoolDoc.exists) {
         Map<String, dynamic> schoolData = schoolDoc.data() as Map<String, dynamic>;
 
-        // Create a new DriverRoutes instance with the fetched data
+        // Create a new DriverRoutes instance with the fetched data and the current user's ID
         DriverRoutes driverRoute = DriverRoutes(
-          driverId: schoolData['driverId'] ?? '',
+          driverId: userId,
           childsName: schoolData['name'] ?? '',
           pickupLocation: schoolData['pickupLocation'] ?? '',
           destination: schoolData['destinationLocation'] ?? '',
@@ -36,7 +48,7 @@ class FirestoreService {
 
         print('Document copied successfully');
       } else {
-        print('No such document in the schools collection');
+        print('No such document in the children collection');
       }
     } catch (e) {
       print('Error copying document: $e');

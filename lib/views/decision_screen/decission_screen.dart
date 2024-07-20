@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:metroshuttle/controller/auth_controller.dart';
-// import 'package:metroshuttle/views/driver/car_registration/car_registration_template.dart';
+import 'package:metroshuttle/views/admin.dart';
+
 import 'package:metroshuttle/views/login_screen.dart';
 
 import '../../widgets/green_intro_widget.dart';
@@ -35,6 +36,14 @@ class DecisionScreen extends StatelessWidget {
               authController.isLoginAsDriver = false;
               Get.to(() => LoginScreen());
             }, Get.width * 0.8),
+            const SizedBox(
+              height: 20,
+            ),
+            DecisionButton('assets/customer.png', 'Login As Cordinator', () {
+              authController.isLoginAsDriver = false;
+              Get.to(() => SchoolAdminPage());
+            }, Get.width * 0.8),
+            
           ],
         ),
       ),
