@@ -5,8 +5,9 @@ import 'package:metroshuttle/views/parent/parent_homescreen.dart';
 
 class DriverSelectionScreen extends StatelessWidget {
   final String docId;
+  final String userId;
 
-  DriverSelectionScreen({required this.docId});
+  DriverSelectionScreen({required this.docId, required this.userId});
 
   Future<String> _fetchRegion() async {
     final docSnapshot = await FirebaseFirestore.instance
@@ -78,7 +79,7 @@ class DriverSelectionScreen extends StatelessWidget {
                       return InkWell(
                         onTap: () async {
                           await _updateDriverField(driver['driverId']);
-                          Get.offAll(() => ParentHomeScreen());
+                          Get.offAll(() => ParentHomeScreen(userId: userId));
                         },
                         child: Card(
                           margin: EdgeInsets.all(10.0),

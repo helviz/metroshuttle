@@ -94,7 +94,7 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
       );
 
       // Navigate to DriverSelectionScreen with document ID
-      Get.to(() => DriverSelectionScreen(docId: docId));
+      Get.to(() => DriverSelectionScreen(docId: docId, userId: userId,));
 
       setState(() {
         _isLoading = false;

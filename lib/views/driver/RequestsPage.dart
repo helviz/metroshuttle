@@ -187,7 +187,7 @@ class _RequestCardState extends State<RequestCard> {
               Text('Name: ${widget.request['name']}', style: GoogleFonts.lato(fontSize: 16)),
               Text('Region: ${widget.request['region']}', style: GoogleFonts.lato(fontSize: 16)),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
                     onPressed: _acceptRequest,
