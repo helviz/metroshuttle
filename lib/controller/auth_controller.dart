@@ -195,18 +195,18 @@ class AuthController extends GetxController {
   //   });
   // }
 
-  // var myUser = UserModel().obs;
+  var myUser = UserModel().obs;
 
-  // getUserInfo() {
-  //   String uid = FirebaseAuth.instance.currentUser!.uid;
-  //   FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(uid)
-  //       .snapshots()
-  //       .listen((event) {
-  //     myUser.value = UserModel.fromJson(event.data()!);
-  //   });
-  // }
+  getUserInfo() {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .snapshots()
+        .listen((event) {
+      myUser.value = UserModel.fromJson(event.data()!);
+    });
+  }
 
   Future<Prediction?> showGoogleAutoComplete(BuildContext context) async {
     Prediction? p = await PlacesAutocomplete.show(
