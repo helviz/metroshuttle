@@ -15,6 +15,7 @@ import 'package:metroshuttle/views/driver/driverhome.dart';
 // import 'package:metroshuttle/views/driver/car_registration/car_registration_template.dart';
 // import 'package:metroshuttle/views/home.dart';
 import 'package:metroshuttle/views/parent/parent_homescreen.dart';
+import 'package:metroshuttle/views/profile_settings.dart';
 // import 'package:metroshuttle/views/profile_settings.dart';
 import 'package:path/path.dart' as Path;
 
@@ -129,11 +130,11 @@ class AuthController extends GetxController {
       } else {
         if (value.exists) {
           // Navigate to ParentHomeScreen
-          Get.offAll(() => ParentHomeScreen());
+          Get.offAll(() => ParentHomeScreen(userId:userId));
         } else {
           // Navigate to ProfileSettingScreen or handle accordingly
-          // Get.offAll(() => ProfileSettingScreen());
-          Get.offAll(() => ParentHomeScreen());
+          Get.offAll(() => ProfileSettingScreen());
+          // Get.offAll(() => ParentHomeScreen());
         }
       }
     }).catchError((e) {
