@@ -400,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           InkWell(
             onTap: () {
-              Get.to(() => const MyProfile());
+              Get.to(() => const ProfilePage());
             },
             child: SizedBox(
               height: 150,
