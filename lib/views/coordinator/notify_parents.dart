@@ -64,6 +64,3 @@ class _CoordinatorScreenState extends State<CoordinatorScreen> {
     );
   }
 }
-
-class FirebaseMessaging {
-}
