@@ -63,7 +63,12 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Location Map'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('Location Map'),
+          ],
+        ),
         backgroundColor: Colors.green,
       ),
       body: GoogleMap(
