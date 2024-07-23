@@ -19,10 +19,11 @@ class ProfileSettingScreen extends StatefulWidget {
 }
 
 class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
-  TextEditingController nameController = TextEditingController();
+  TextEditingController parentnameController = TextEditingController();
+  TextEditingController parentcontactController = TextEditingController();
   TextEditingController homeController = TextEditingController();
-  TextEditingController businessController = TextEditingController();
-  TextEditingController shopController = TextEditingController();
+  // TextEditingController businessController = TextEditingController();
+  // TextEditingController shopController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   AuthController authController = Get.find<AuthController>();
 
@@ -30,8 +31,8 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
   File? selectedImage;
 
   late LatLng homeAddress;
-  late LatLng businessAddress;
-  late LatLng shoppingAddress;
+  // late LatLng businessAddress;
+  // late LatLng shoppingAddress;
   getImage(ImageSource source) async {
     final XFile? image = await _picker.pickImage(source: source);
     if (image != null) {
@@ -101,7 +102,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                   child: Column(
                     children: [
                       TextFieldWidget(
-                          'Name', Icons.person_outlined, nameController,(String? input){
+                          'Name', Icons.person_outlined, parentnameController,(String? input){
 
                             if(input!.isEmpty){
                               return 'Name is required!';
@@ -138,46 +139,46 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
 
 
                       },readOnly: true),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextFieldWidget('Business Address', Icons.card_travel,
-                          businessController,(String? input){
-                            if(input!.isEmpty){
-                              return 'Business Address is required!';
-                            }
+                //       const SizedBox(
+                //         height: 10,
+                //       ),
+                //       TextFieldWidget('Business Address', Icons.card_travel,
+                //           businessController,(String? input){
+                //             if(input!.isEmpty){
+                //               return 'Business Address is required!';
+                //             }
+                //
+                //             return null;
+                //           },onTap: ()async{
+                //             Prediction? p = await  authController.showGoogleAutoComplete(context);
+                //
+                //            /// now let's translate this selected address and convert it to latlng obj
+                //
+                //             businessAddress = await authController.buildLatLngFromAddress(p!.description!);
+                //             businessController.text = p.description!;
+                //             ///store this information into firebase together once update is clicked
+                //
+                //           },readOnly: true),
+                //       const SizedBox(
+                //         height: 10,
+                //       ),
+                //       TextFieldWidget('Shopping Center',
+                //           Icons.shopping_cart_outlined, shopController,(String? input){
+                //             if(input!.isEmpty){
+                //               return 'Shopping Center is required!';
+                //             }
+                //
+                //             return null;
+                //           },onTap: ()async{
+                // Prediction? p = await  authController.showGoogleAutoComplete(context);
+                //
+                // /// now let's translate this selected address and convert it to latlng obj
+                //
+                // shoppingAddress = await authController.buildLatLngFromAddress(p!.description!);
+                // shopController.text = p.description!;
+                // ///store this information into firebase together once update is clicked
 
-                            return null;
-                          },onTap: ()async{
-                            Prediction? p = await  authController.showGoogleAutoComplete(context);
-
-                           /// now let's translate this selected address and convert it to latlng obj
-
-                            businessAddress = await authController.buildLatLngFromAddress(p!.description!);
-                            businessController.text = p.description!;
-                            ///store this information into firebase together once update is clicked
-
-                          },readOnly: true),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextFieldWidget('Shopping Center',
-                          Icons.shopping_cart_outlined, shopController,(String? input){
-                            if(input!.isEmpty){
-                              return 'Shopping Center is required!';
-                            }
-
-                            return null;
-                          },onTap: ()async{
-                Prediction? p = await  authController.showGoogleAutoComplete(context);
-
-                /// now let's translate this selected address and convert it to latlng obj
-
-                shoppingAddress = await authController.buildLatLngFromAddress(p!.description!);
-                shopController.text = p.description!;
-                ///store this information into firebase together once update is clicked
-
-                },readOnly: true),
+                // },readOnly: true),
                       const SizedBox(
                         height: 30,
                       ),
