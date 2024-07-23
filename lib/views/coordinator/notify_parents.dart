@@ -7,33 +7,24 @@ class CoordinatorScreen extends StatefulWidget {
   _CoordinatorScreenState createState() => _CoordinatorScreenState();
 }
 
+
 class _CoordinatorScreenState extends State<CoordinatorScreen> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  @override
-  void initState() {
-    super.initState();
-    _firebaseMessaging.getToken().then((token) {
-      print('Token: $token');
-    });
-  }
-
-  void _sendNotification(String childId, String parentId, String message) async {
+  void _sendNotification(String parentId, String message) async {
     final parentToken = await _firestore.collection('parents').doc(parentId).get().then((doc) => doc['token']);
     await _firebaseMessaging.sendToToken(parentToken, message);
   }
 
-  void _checkInChild(String childId) async {
+  void _checkInChild(String childId, String parentId) async {
     await _firestore.collection('children').doc(childId).update({'arrived': true});
-    final parentId = await _firestore.collection('children').doc(childId).get().then((doc) => doc['parentId']);
-    _sendNotification(childId, parentId, 'Your child has arrived!');
+    _sendNotification(parentId, 'Your child has arrived at school!');
   }
 
-  void _checkOutChild(String childId) async {
+  void _checkOutChild(String childId, String parentId) async {
     await _firestore.collection('children').doc(childId).update({'departed': true});
-    final parentId = await _firestore.collection('children').doc(childId).get().then((doc) => doc['parentId']);
-    _sendNotification(childId, parentId, 'Your child has departed!');
+    _sendNotification(parentId, 'Your child has left school!');
   }
 
   @override
@@ -48,13 +39,13 @@ class _CoordinatorScreenState extends State<CoordinatorScreen> {
           children: [
             ElevatedButton(
               onPressed: () {
-                _checkInChild('child-1');
+                _checkInChild('child-1', 'parent-1');
               },
               child: Text('Check in Child 1'),
             ),
             ElevatedButton(
               onPressed: () {
-                _checkOutChild('child-1');
+                _checkOutChild('child-1', 'parent-1');
               },
               child: Text('Check out Child 1'),
             ),
