@@ -162,39 +162,41 @@ class AuthController extends GetxController {
     return imageUrl;
   }
 
-  // storeUserInfo(
-  //     File? selectedImage,
-  //     String name,
-  //     String home,
-  //     String business,
-  //     String shop, {
-  //       String url = '',
-  //       LatLng? homeLatLng,
-  //       LatLng? businessLatLng,
-  //       LatLng? shoppingLatLng,
-  //     }) async {
-  //   String url_new = url;
-  //   if (selectedImage != null) {
-  //     url_new = await uploadImage(selectedImage);
-  //   }
-  //   String uid = FirebaseAuth.instance.currentUser!.uid;
-  //   FirebaseFirestore.instance.collection('users').doc(uid).set({
-  //     'image': url_new,
-  //     'name': name,
-  //     'home_address': home,
-  //     'business_address': business,
-  //     'shopping_address': shop,
-  //     'home_latlng': GeoPoint(homeLatLng!.latitude, homeLatLng.longitude),
-  //     'business_latlng':
-  //     GeoPoint(businessLatLng!.latitude, businessLatLng.longitude),
-  //     'shopping_latlng':
-  //     GeoPoint(shoppingLatLng!.latitude, shoppingLatLng.longitude),
-  //   },SetOptions(merge: true)).then((value) {
-  //     isProfileUploading(false);
+  storeUserInfo(
+      File? selectedImage,
+      String parentname,
+      String parentcontact,
+      String home,{
+      // String business,
+      // String shop, {
+        String url = '',
+        LatLng? homeLatLng,
+        LatLng? businessLatLng,
+        // LatLng? shoppingLatLng,
+      }) async {
+    String url_new = url;
+    if (selectedImage != null) {
+      url_new = await uploadImage(selectedImage);
+    }
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'image': url_new,
+      'name': parentname,
+      'contact': parentcontact,
+      'homeAddress': home,
+      // 'business_address': business,
+      // 'shopping_address': shop,
+      'home_latlng': GeoPoint(homeLatLng!.latitude, homeLatLng.longitude),
+      'business_latlng':
+      GeoPoint(businessLatLng!.latitude, businessLatLng.longitude),
+      // 'shopping_latlng':
+      // GeoPoint(shoppingLatLng!.latitude, shoppingLatLng.longitude),
+    },SetOptions(merge: true)).then((value) {
+      isProfileUploading(false);
 
-  //     // Get.to(() => HomeScreen());
-  //   });
-  // }
+      // Get.to(() => HomeScreen());
+    });
+  }
 
   var myUser = UserModel().obs;
 

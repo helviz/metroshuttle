@@ -10,12 +10,13 @@ import 'dart:io';
 
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({Key? key}) : super(key: key);
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _parentnameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   File? _imageFile;
   bool _isLoading = false;
@@ -32,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _uploadProfile() async {
-    if (_nameController.text.isEmpty || _phoneNumberController.text.isEmpty || _imageFile == null) {
+    if (_parentnameController.text.isEmpty || _phoneNumberController.text.isEmpty || _imageFile == null) {
       Get.snackbar('Error', 'All fields are required!');
       return;
     }
@@ -52,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       // Save user data to Firestore
       final parent = Parent(
-        name: _nameController.text,
+        name: _parentnameController.text,
         phoneNumber: _phoneNumberController.text,
         imageUrl: imageUrl,
       );
@@ -97,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Text('Upload Profile Picture'),
                   ),
                   TextField(
-                    controller: _nameController,
+                    controller: _parentnameController,
                     decoration: InputDecoration(labelText: 'Name'),
                   ),
                   TextField(
