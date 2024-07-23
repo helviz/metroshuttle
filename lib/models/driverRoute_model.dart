@@ -7,6 +7,8 @@ class DriverRoutes {
   DateTime endDate;
   String? parentsName; // Nullable
   String? phoneNumber; // Nullable
+  bool active;
+  bool dropoff;
 
   DriverRoutes({
     required this.driverId,
@@ -17,6 +19,8 @@ class DriverRoutes {
     required this.endDate,
     this.parentsName,
     this.phoneNumber,
+    this.active = true,
+    this.dropoff = false,
   });
 
   // Factory constructor to create an instance from a JSON object
@@ -30,6 +34,8 @@ class DriverRoutes {
       endDate: DateTime.parse(json['endDate']),
       parentsName: json['parentsName'],
       phoneNumber: json['phoneNumber'],
+      active: json['active'] ?? true,
+      dropoff: json['dropoff'] ?? false,
     );
   }
 
@@ -44,6 +50,8 @@ class DriverRoutes {
       'endDate': endDate.toIso8601String(),
       'parentsName': parentsName,
       'phoneNumber': phoneNumber,
+      'active': active,
+      'dropoff': dropoff,
     };
   }
 }
