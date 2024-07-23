@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:metroshuttle/models/user_parent.dart';
 import 'package:metroshuttle/views/parent/parent_homescreen.dart';
 import 'package:metroshuttle/widgets/green_intro_widget.dart';
@@ -42,6 +43,14 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
     });
 
     try {
+      // Get the current user
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        Get.snackbar('Error', 'No user is logged in!');
+        return;
+      }
+      String userId = currentUser.uid;
+
       // Upload image to Firebase Storage
       final storageRef = FirebaseStorage.instance
           .ref()
@@ -57,8 +66,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
         imageUrl: imageUrl,
       );
 
-      DocumentReference docRef = await FirebaseFirestore.instance.collection('users').add(parent.toMap());
-      String userId = docRef.id;
+      await FirebaseFirestore.instance.collection('users').doc(userId).set(parent.toMap());
 
       Get.snackbar('Success', 'Profile created successfully!');
 
@@ -122,6 +130,13 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneNumberController.dispose();
+    super.dispose();
   }
 }
 
