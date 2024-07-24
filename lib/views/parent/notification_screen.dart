@@ -80,7 +80,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 setState(() {
                   notifications.add(notification);
                   processedNotificationIds.add(notification.id);
-                  notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+                  notifications
+                      .sort((a, b) => b.timestamp.compareTo(a.timestamp));
                 });
               }
             }
@@ -96,8 +97,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Future<void> _showLocalNotification(String title, String body) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
+      'metro25',
+      'metroshuttle',
       importance: Importance.max,
       priority: Priority.high,
       showWhen: false,
@@ -124,7 +125,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
         itemCount: notifications.length,
         itemBuilder: (context, index) {
           final notification = notifications[index];
-          final formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(notification.timestamp);
+          final formattedDate =
+              DateFormat('yyyy-MM-dd – kk:mm').format(notification.timestamp);
           return Card(
             child: ListTile(
               leading: Icon(Icons.notification_important, color: Colors.green),
@@ -134,7 +136,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 children: [
                   Text(notification.body),
                   SizedBox(height: 4.0),
-                  Text(formattedDate, style: TextStyle(fontSize: 12.0, color: Colors.grey)),
+                  Text(formattedDate,
+                      style: TextStyle(fontSize: 12.0, color: Colors.grey)),
                 ],
               ),
             ),
@@ -163,7 +166,8 @@ class NotificationModel {
         id: json['id'] as String,
         title: json['title'] as String,
         body: json['body'] as String,
-        timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp'] as int),
+        timestamp:
+            DateTime.fromMillisecondsSinceEpoch(json['timestamp'] as int),
       );
 
   Map<String, dynamic> toJson() => {
