@@ -7,15 +7,15 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:metroshuttle/models/user_parent.dart';
-import 'package:metroshuttle/views/parent/parent_homescreen.dart';
+import 'package:metroshuttle/views/coordinator/register_coordinator.dart';
 import 'package:metroshuttle/widgets/green_intro_widget.dart';
 
-class ProfileSettingScreen extends StatefulWidget {
+class CoordinatorProfile extends StatefulWidget {
   @override
-  _ProfileSettingScreenState createState() => _ProfileSettingScreenState();
+  _CoordinatorProfileState createState() => _CoordinatorProfileState();
 }
 
-class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
+class _CoordinatorProfileState extends State<CoordinatorProfile> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   File? _imageFile;
@@ -70,8 +70,8 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
 
       Get.snackbar('Success', 'Profile created successfully!');
 
-      // Navigate to ParentHomeScreen with userId
-      Get.offAll(() => ParentHomeScreen(userId: userId)); 
+      // Navigate to CoordinatorForm after successful profile creation
+      Get.offAll(() => CoordinatorForm());
     } catch (e) {
       Get.snackbar('Error', 'Failed to create profile!');
     } finally {
