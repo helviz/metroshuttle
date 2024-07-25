@@ -14,43 +14,66 @@ class _ChildArrivalTableState extends State<ChildArrivalTable> {
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columns: [
-        DataColumn(label: Text('Child\'s Name')),
-        DataColumn(label: Text('Parent\'s Name')),
-        DataColumn(label: Text('Phone Number')),
-        DataColumn(label: Text('Arrived')),
-        DataColumn(label: Text('Departed')),
-      ],
-      rows: _children.map((child) {
-        return DataRow(
-          cells: [
-            DataCell(Text(child.name)),
-            DataCell(Text(child.parentName)),
-            DataCell(Text(child.phoneNumber)),
-            DataCell(
-              Checkbox(
-                value: child.arrived,
-                onChanged: (value) {
-                  setState(() {
-                    child.arrived = value!;
-                  });
-                },
-              ),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        columnSpacing: 20,
+        columns: [
+          DataColumn(
+            label: Container(
+              width: 150,
+              child: Text('Child\'s Name'),
             ),
-            DataCell(
-              Checkbox(
-                value: child.departed,
-                onChanged: (value) {
-                  setState(() {
-                    child.departed = value!;
-                  });
-                },
-              ),
+          ),
+          DataColumn(
+            label: Text('Arrived'),
+          ),
+          DataColumn(
+            label: Text('Departed'),
+          ),
+          DataColumn(
+            label: Container(
+              width: 200,
+              child: Text('Parent\'s Name'),
             ),
-          ],
-        );
-      }).toList(),
+          ),
+          DataColumn(
+            label: Container(
+              width: 150,
+              child: Text('Phone Number'),
+            ),
+          ),
+        ],
+        rows: _children.map((child) {
+          return DataRow(
+            cells: [
+              DataCell(Text(child.name)),
+              DataCell(
+                Checkbox(
+                  value: child.arrived,
+                  onChanged: (value) {
+                    setState(() {
+                      child.arrived = value!;
+                    });
+                  },
+                ),
+              ),
+              DataCell(
+                Checkbox(
+                  value: child.departed,
+                  onChanged: (value) {
+                    setState(() {
+                      child.departed = value!;
+                    });
+                  },
+                ),
+              ),
+              DataCell(Text(child.parentName)),
+              DataCell(Text(child.phoneNumber)),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 }
@@ -62,5 +85,11 @@ class Child {
   bool arrived;
   bool departed;
 
-  Child({required this.name, required this.parentName, required this.phoneNumber, this.arrived = false, this.departed = false});
+  Child({
+    required this.name,
+    required this.parentName,
+    required this.phoneNumber,
+    this.arrived = false,
+    this.departed = false,
+  });
 }
