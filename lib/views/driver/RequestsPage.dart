@@ -168,7 +168,7 @@ await flutterLocalNotificationsPlugin.show(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: requests == null || requests.isEmpty
+                          child: requests.isEmpty
                               ? Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -211,7 +211,7 @@ await flutterLocalNotificationsPlugin.show(
                                   },
                                 ),
                         ),
-                        if (requests != null && requests.isNotEmpty)
+                        if (requests.isNotEmpty)
                           ElevatedButton(
                             onPressed: () {
                               Navigator.push(
@@ -256,18 +256,69 @@ class _RequestCardState extends State<RequestCard> {
   final FirestoreService _firestoreService = FirestoreService();
 
   void _acceptRequest() async {
+    // Update request field
     await FirebaseFirestore.instance.collection('children').doc(widget.docId).update({
       'request': true,
     });
+
+    // Copy school data to driver routes
     await _firestoreService.copySchoolToDriverRoutes(widget.docId);
-    widget.onUpdate(); // Trigger page refresh
+
+    // Get user ID
+    final DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('children')
+        .doc(widget.docId)
+        .get();
+
+    if (snapshot.exists) {
+      final Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+      if (data != null) {
+        final String? userID = data['userId'] as String?;
+
+        if (userID != null) {
+          sendNotification(userID, "REQUEST STATUS", "Request Accepted");
+        } else {
+          // Handle the case where userID is null
+          print("userID is null");
+        }
+      }
+
+      // Use the retrieved userId here (optional)
+      if (mounted) {
+        widget.onUpdate(); // Pass userId to onUpdate if needed
+      }
+    } else {
+      print("Document not found for child: ${widget.docId}");
+    }
   }
 
   void _denyRequest() async {
     await FirebaseFirestore.instance.collection('children').doc(widget.docId).update({
       'request': false,
     });
-    widget.onUpdate(); // Trigger page refresh
+
+    // Get user ID
+    final DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('children')
+        .doc(widget.docId)
+        .get();
+
+    if (snapshot.exists) {
+      final Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+      if (data != null) {
+        final String? userID = data['userId'] as String?;
+
+        if (userID != null) {
+          sendNotification(userID, "REQUEST STATUS", "Request Denied");
+        } else {
+          // Handle the case where userID is null
+          print("userID is null");
+        }
+      }
+      if (mounted) {
+        widget.onUpdate(); // Trigger page refresh
+      }
+    }
   }
   
   @override
@@ -296,7 +347,7 @@ class _RequestCardState extends State<RequestCard> {
               Text('Name: ${widget.request['name']}', style: GoogleFonts.lato(fontSize: 16)),
               Text('Region: ${widget.request['region']}', style: GoogleFonts.lato(fontSize: 16)),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton( 
                     onPressed: () { 

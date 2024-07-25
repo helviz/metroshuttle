@@ -63,6 +63,8 @@ dependencies:
   google_place: 0.4.7
   geolocator: ^9.0.2
   http: ^0.13.3
+  uuid: ^4.4.2
+  flutter_local_notifications: ^9.3.0
   
 dev_dependencies:
   flutter_test:

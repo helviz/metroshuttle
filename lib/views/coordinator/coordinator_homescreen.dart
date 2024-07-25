@@ -2,41 +2,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:metroshuttle/views/coordinator/attendance.dart';
 import 'package:metroshuttle/views/decision_screen/decission_screen.dart';
 import 'package:metroshuttle/views/my_profile.dart';
-import 'package:metroshuttle/views/parent/ParentsRequestsPage.dart';
-import 'package:metroshuttle/views/parent/notification_screen.dart';
 
-class ParentHomeScreen extends StatefulWidget {
+class CoordinatorHomeScreen extends StatefulWidget {
   final String userId;
 
-  const ParentHomeScreen({Key? key, required this.userId}) : super(key: key);
+  const CoordinatorHomeScreen({Key? key, required this.userId})
+      : super(key: key);
 
   @override
-  _ParentHomeScreenState createState() => _ParentHomeScreenState();
+  _CoordinatorHomeScreenState createState() => _CoordinatorHomeScreenState();
 }
 
-class _ParentHomeScreenState extends State<ParentHomeScreen> {
+class _CoordinatorHomeScreenState extends State<CoordinatorHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  int _selectedIndex = 0;
-
-  late final List<Widget> _pages;
 
   @override
-  void initState() {
-    super.initState();
-    _pages = [
-      ParentsRequestPage(),
-      NotificationScreen(),
-    ];
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   void _logout() async {
     await FirebaseAuth.instance.signOut();
     Get.offAll(() => DecisionScreen());
@@ -56,38 +39,26 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
           },
         ),
       ),
-      body: _pages[_selectedIndex],
-      drawer: ParentSidePanel(logoutCallback: _logout, userId: widget.userId),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.child_care),
-            label: 'Requests',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green,
-        onTap: _onItemTapped,
-      ),
+      body: ChildArrivalTable(),
+      drawer:
+          CoordinatorSidePanel(logoutCallback: _logout, userId: widget.userId),
     );
   }
 }
 
-class ParentSidePanel extends StatefulWidget {
+class CoordinatorSidePanel extends StatefulWidget {
   final VoidCallback logoutCallback;
   final String userId;
 
-  const ParentSidePanel({Key? key, required this.logoutCallback, required this.userId}) : super(key: key);
+  const CoordinatorSidePanel(
+      {Key? key, required this.logoutCallback, required this.userId})
+      : super(key: key);
 
   @override
-  _ParentSidePanelState createState() => _ParentSidePanelState();
+  _CoordinatorSidePanelState createState() => _CoordinatorSidePanelState();
 }
 
-class _ParentSidePanelState extends State<ParentSidePanel> {
+class _CoordinatorSidePanelState extends State<CoordinatorSidePanel> {
   String? _imageUrl;
   String? _userName;
 
@@ -101,23 +72,22 @@ class _ParentSidePanelState extends State<ParentSidePanel> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
         if (userDoc.exists) {
           setState(() {
             _imageUrl = userDoc['imageUrl'];
             _userName = userDoc['name'];
           });
-          print('User Name: $_userName');
-          print('Image URL: $_imageUrl');
         } else {
           setState(() {
             _imageUrl = null;
             _userName = "User";
           });
-          print('User document does not exist');
         }
       } catch (e) {
-        print("Error fetching user data: $e");
         setState(() {
           _imageUrl = null;
           _userName = "User";
