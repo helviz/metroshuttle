@@ -16,9 +16,12 @@ class ChildManagementScreen extends StatefulWidget {
 class _ChildManagementScreenState extends State<ChildManagementScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _homeAddressController = TextEditingController();
+  final _customSchoolAddressController = TextEditingController();
   LatLng? _pickupLocation;
   LatLng? _destinationLocation;
   String? _selectedRegion;
+  String? _selectedSchoolAddress;
   final List<String> _regions = ['Central', 'Kawempe', 'Nakawa', 'Lubaga', 'Makindye'];
   DateTime? _startDate;
   DateTime? _endDate;
@@ -29,6 +32,8 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _homeAddressController.dispose();
+    _customSchoolAddressController.dispose();
     super.dispose();
   }
 
@@ -74,6 +79,8 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
       final child = Child(
         userId: userId,
         name: _nameController.text,
+        homeAddress: _homeAddressController.text,
+        schoolAddress: _selectedSchoolAddress ?? _customSchoolAddressController.text,
         pickupLocation: '${_pickupLocation?.latitude},${_pickupLocation?.longitude}',
         destinationLocation: '${_destinationLocation?.latitude},${_destinationLocation?.longitude}',
         region: _selectedRegion!,
@@ -94,7 +101,7 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
       );
 
       // Navigate to DriverSelectionScreen with document ID
-      Get.to(() => DriverSelectionScreen(docId: docId, userId: userId,));
+      Get.to(() => DriverSelectionScreen(docId: docId, userId: userId));
 
       setState(() {
         _isLoading = false;
@@ -108,10 +115,13 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
 
   void _resetForm() {
     _nameController.clear();
+    _homeAddressController.clear();
+    _customSchoolAddressController.clear();
     setState(() {
       _pickupLocation = null;
       _destinationLocation = null;
       _selectedRegion = null;
+      _selectedSchoolAddress = null;
       _startDate = null;
       _endDate = null;
       _isPickupPinned = false;
@@ -156,8 +166,11 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 _buildTextField(_nameController, 'Child\'s Name'),
-                _buildLocationPicker('Pick-up Location', true, _isPickupPinned),
-                _buildLocationPicker('Destination Location', false, _isDestinationPinned),
+                _buildTextField(_homeAddressController, 'Home Address'),
+                _buildLocationPicker('Pin Home Adsress', true, _isPickupPinned),
+                _buildSchoolAddressField(),
+                
+                _buildLocationPicker('Pin School Address', false, _isDestinationPinned),
                 _buildDropdownField(),
                 _buildDateField('Start Date', _startDate, true),
                 _buildDateField('End Date', _endDate, false),
@@ -198,6 +211,81 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
             return 'Please enter $labelText';
           }
           return null;
+        },
+      ),
+    );
+  }
+
+  Widget _buildSchoolAddressField() {
+    final coordinatorsRef = FirebaseFirestore.instance.collection('coordinators');
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: StreamBuilder<QuerySnapshot>(
+        stream: coordinatorsRef.snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return CircularProgressIndicator();
+          }
+
+          List<DropdownMenuItem<String>> options = snapshot.data!.docs.map((doc) {
+            String schoolName = doc['schoolName'];
+            return DropdownMenuItem<String>(
+              value: schoolName,
+              child: Text(schoolName),
+            );
+          }).toList();
+
+          return Column(
+            children: [
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  labelText: "Select School Address",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                value: _selectedSchoolAddress,
+                isExpanded: true,
+                hint: Text("Select..."),
+                items: options,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedSchoolAddress = newValue;
+                    _customSchoolAddressController.clear();
+                  });
+                },
+                validator: (value) {
+                  if ((value == null || value.isEmpty) && _customSchoolAddressController.text.isEmpty) {
+                    return "Please select or enter a school address";
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 8),
+              TextFormField(
+                controller: _customSchoolAddressController,
+                decoration: InputDecoration(
+                  labelText: "Or enter a school address",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onChanged: (value) {
+                  if (value.isNotEmpty) {
+                    setState(() {
+                      _selectedSchoolAddress = null;
+                    });
+                  }
+                },
+                validator: (value) {
+                  if ((_selectedSchoolAddress == null || _selectedSchoolAddress!.isEmpty) && value!.isEmpty) {
+                    return "Please select or enter a school address";
+                  }
+                  return null;
+                },
+              ),
+            ],
+          );
         },
       ),
     );

@@ -9,7 +9,8 @@ import 'package:metroshuttle/views/my_profile.dart';
 class CoordinatorHomeScreen extends StatefulWidget {
   final String userId;
 
-  const CoordinatorHomeScreen({Key? key, required this.userId}) : super(key: key);
+  const CoordinatorHomeScreen({Key? key, required this.userId})
+      : super(key: key);
 
   @override
   _CoordinatorHomeScreenState createState() => _CoordinatorHomeScreenState();
@@ -17,25 +18,8 @@ class CoordinatorHomeScreen extends StatefulWidget {
 
 class _CoordinatorHomeScreenState extends State<CoordinatorHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  int _selectedIndex = 0;
-
-  late final List<Widget> _pages;
 
   @override
-  void initState() {
-    super.initState();
-    _pages = [
-      ChildArrivalTable(),
-      // ProfilePage(), // Assuming you have a ProfilePage
-    ];
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   void _logout() async {
     await FirebaseAuth.instance.signOut();
     Get.offAll(() => DecisionScreen());
@@ -55,23 +39,9 @@ class _CoordinatorHomeScreenState extends State<CoordinatorHomeScreen> {
           },
         ),
       ),
-      body: _pages[_selectedIndex],
-      drawer: CoordinatorSidePanel(logoutCallback: _logout, userId: widget.userId),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_add),
-            label: 'Register',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green,
-        onTap: _onItemTapped,
-      ),
+      body: ChildArrivalTable(),
+      drawer:
+          CoordinatorSidePanel(logoutCallback: _logout, userId: widget.userId),
     );
   }
 }
@@ -80,7 +50,9 @@ class CoordinatorSidePanel extends StatefulWidget {
   final VoidCallback logoutCallback;
   final String userId;
 
-  const CoordinatorSidePanel({Key? key, required this.logoutCallback, required this.userId}) : super(key: key);
+  const CoordinatorSidePanel(
+      {Key? key, required this.logoutCallback, required this.userId})
+      : super(key: key);
 
   @override
   _CoordinatorSidePanelState createState() => _CoordinatorSidePanelState();
@@ -100,7 +72,10 @@ class _CoordinatorSidePanelState extends State<CoordinatorSidePanel> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
         if (userDoc.exists) {
           setState(() {
             _imageUrl = userDoc['imageUrl'];

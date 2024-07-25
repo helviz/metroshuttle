@@ -8,6 +8,8 @@ class Child {
   final DateTime endDate;
   final String? driver; // Nullable field
   final bool? request;   // Nullable field
+  final String? schoolAddress; // Nullable field
+  final String? homeAddress; // Nullable field
 
   Child({
     required this.userId,
@@ -19,6 +21,8 @@ class Child {
     required this.endDate,
     this.driver,
     this.request,
+    this.schoolAddress,
+    this.homeAddress,
   });
 
   // Convert a Child object into a Map object
@@ -33,6 +37,8 @@ class Child {
       'endDate': endDate.toIso8601String(),
       'driver': driver,
       'request': request,
+      'schoolAddress': schoolAddress,
+      'homeAddress': homeAddress,
     };
   }
 
@@ -48,6 +54,8 @@ class Child {
       endDate: DateTime.parse(map['endDate']),
       driver: map['driver'],
       request: map['request'],
+      schoolAddress: map['schoolAddress'],
+      homeAddress: map['homeAddress'],
     );
   }
 }
