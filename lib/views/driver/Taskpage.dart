@@ -12,6 +12,10 @@ class TasksPage extends StatelessWidget {
     return querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
   }
 
+  void _handleDropoffChange(bool? value, ) {
+    // Empty function to handle dropoff checkbox changes
+  }
+
   @override
   Widget build(BuildContext context) {
     // Get current user
@@ -35,34 +39,46 @@ class TasksPage extends StatelessWidget {
                   return Center(child: Text('No tasks found'));
                 } else {
                   List<Map<String, dynamic>> routes = snapshot.data!;
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Expanded(
+                  return SingleChildScrollView(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
                       child: DataTable(
                         columnSpacing: 20.0,
                         columns: [
                           DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Child\'s Name',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                              ),
+                            label: Text(
+                              'Child\'s Name',
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ),
                           DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Parent\'s Name',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                              ),
+                            label: Text(
+                              'Parent\'s Name',
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ),
                           DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Phone Number',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                              ),
+                            label: Text(
+                              'Phone Number',
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Home Address',
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'School',
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Dropoff',
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -84,6 +100,24 @@ class TasksPage extends StatelessWidget {
                               ConstrainedBox(
                                 constraints: BoxConstraints(maxWidth: 120),
                                 child: Text(route['phoneNumber'] ?? ''),
+                              ),
+                            ),
+                            DataCell(
+                              ConstrainedBox(
+                                constraints: BoxConstraints(maxWidth: 120),
+                                child: Text(route['homeAddress'] ?? ''),
+                              ),
+                            ),
+                            DataCell(
+                              ConstrainedBox(
+                                constraints: BoxConstraints(maxWidth: 120),
+                                child: Text(route['schoolAddress'] ?? ''),
+                              ),
+                            ),
+                            DataCell(
+                              Checkbox(
+                                value: route['dropoff'] ?? false,
+                                onChanged: _handleDropoffChange,
                               ),
                             ),
                           ]);

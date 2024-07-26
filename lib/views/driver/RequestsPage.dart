@@ -21,7 +21,9 @@ class _RequestsPageState extends State<RequestsPage> {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('children')
         .where('driver', isEqualTo: userId)
-        .where('request', isNull: true)  // Ensure only documents with a null request field are fetched
+        .where('request',
+            isNull:
+                true) // Ensure only documents with a null request field are fetched
         .get();
 
     return querySnapshot.docs;
@@ -52,12 +54,14 @@ class _RequestsPageState extends State<RequestsPage> {
               return FutureBuilder<List<QueryDocumentSnapshot>>(
                 future: _getDriverRequests(user.uid),
                 builder: (context, requestsSnapshot) {
-                  if (requestsSnapshot.connectionState == ConnectionState.waiting) {
+                  if (requestsSnapshot.connectionState ==
+                      ConnectionState.waiting) {
                     return CircularProgressIndicator();
                   } else if (requestsSnapshot.hasError) {
                     return Text('Error: ${requestsSnapshot.error}');
                   } else {
-                    List<QueryDocumentSnapshot> requests = requestsSnapshot.data!;
+                    List<QueryDocumentSnapshot> requests =
+                        requestsSnapshot.data!;
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -69,19 +73,25 @@ class _RequestsPageState extends State<RequestsPage> {
                                     children: [
                                       Text(
                                         'No requests found',
-                                        style: GoogleFonts.lato(fontSize: 24, color: Colors.red),
+                                        style: GoogleFonts.lato(
+                                            fontSize: 24, color: Colors.red),
                                       ).animate().fadeIn(duration: 600.ms),
                                       SizedBox(height: 20),
                                       ElevatedButton(
                                         onPressed: () {
                                           Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context) => TasksPage()),
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TasksPage()),
                                           );
                                         },
                                         child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-                                          child: Text('Tasks', style: GoogleFonts.lato(fontSize: 18)),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12.0, horizontal: 24.0),
+                                          child: Text('Tasks',
+                                              style: GoogleFonts.lato(
+                                                  fontSize: 18)),
                                         ),
                                         style: ElevatedButton.styleFrom(
                                           minimumSize: Size(150, 50),
@@ -94,11 +104,13 @@ class _RequestsPageState extends State<RequestsPage> {
                                   itemCount: requests.length,
                                   itemBuilder: (context, index) {
                                     var requestDoc = requests[index];
-                                    var request = requestDoc.data() as Map<String, dynamic>;
+                                    var request = requestDoc.data()
+                                        as Map<String, dynamic>;
                                     return RequestCard(
                                       request: request,
                                       docId: requestDoc.id,
-                                      onUpdate: refreshRequests, // Trigger refresh
+                                      onUpdate:
+                                          refreshRequests, // Trigger refresh
                                     );
                                   },
                                 ),
@@ -108,12 +120,15 @@ class _RequestsPageState extends State<RequestsPage> {
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => TasksPage()),
+                                MaterialPageRoute(
+                                    builder: (context) => TasksPage()),
                               );
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-                              child: Text('Tasks', style: GoogleFonts.lato(fontSize: 18)),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12.0, horizontal: 24.0),
+                              child: Text('Tasks',
+                                  style: GoogleFonts.lato(fontSize: 18)),
                             ),
                             style: ElevatedButton.styleFrom(
                               minimumSize: Size(150, 50),
@@ -137,7 +152,12 @@ class RequestCard extends StatefulWidget {
   final String docId;
   final VoidCallback onUpdate;
 
-  const RequestCard({Key? key, required this.request, required this.docId, required this.onUpdate}) : super(key: key);
+  const RequestCard(
+      {Key? key,
+      required this.request,
+      required this.docId,
+      required this.onUpdate})
+      : super(key: key);
 
   @override
   _RequestCardState createState() => _RequestCardState();
@@ -148,7 +168,10 @@ class _RequestCardState extends State<RequestCard> {
 
   void _acceptRequest() async {
     // Update request field
-    await FirebaseFirestore.instance.collection('children').doc(widget.docId).update({
+    await FirebaseFirestore.instance
+        .collection('children')
+        .doc(widget.docId)
+        .update({
       'request': true,
     });
 
@@ -162,12 +185,14 @@ class _RequestCardState extends State<RequestCard> {
         .get();
 
     if (snapshot.exists) {
-      final Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+      final Map<String, dynamic>? data =
+          snapshot.data() as Map<String, dynamic>?;
       if (data != null) {
-        final String? userID = data['userId'] as String?;
+        final String? parentID = data['userId'] as String?;
 
-        if (userID != null) {
-          sendNotification(userID, "REQUEST STATUS", "Request Accepted");
+        if (parentID != null) {
+          sendNotification(
+              parentID, "REQUEST STATUS", "Driver Accepted your request");
         } else {
           // Handle the case where userID is null
           print("userID is null");
@@ -184,7 +209,10 @@ class _RequestCardState extends State<RequestCard> {
   }
 
   void _denyRequest() async {
-    await FirebaseFirestore.instance.collection('children').doc(widget.docId).update({
+    await FirebaseFirestore.instance
+        .collection('children')
+        .doc(widget.docId)
+        .update({
       'request': false,
     });
 
@@ -195,12 +223,13 @@ class _RequestCardState extends State<RequestCard> {
         .get();
 
     if (snapshot.exists) {
-      final Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+      final Map<String, dynamic>? data =
+          snapshot.data() as Map<String, dynamic>?;
       if (data != null) {
-        final String? userID = data['userId'] as String?;
+        final String? parentID = data['userId'] as String?;
 
-        if (userID != null) {
-          sendNotification(userID, "REQUEST STATUS", "Request Denied");
+        if (parentID != null) {
+          sendNotification(parentID, "REQUEST STATUS", "Request Denied");
         } else {
           // Handle the case where userID is null
           print("userID is null");
@@ -235,19 +264,23 @@ class _RequestCardState extends State<RequestCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Name: ${widget.request['name']}', style: GoogleFonts.lato(fontSize: 16)),
-              Text('Region: ${widget.request['region']}', style: GoogleFonts.lato(fontSize: 16)),
+              Text('Name: ${widget.request['name']}',
+                  style: GoogleFonts.lato(fontSize: 16)),
+              Text('Region: ${widget.request['region']}',
+                  style: GoogleFonts.lato(fontSize: 16)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
                     onPressed: _acceptRequest,
-                    child: Text('Accept Request', style: GoogleFonts.lato(fontSize: 14)),
+                    child: Text('Accept Request',
+                        style: GoogleFonts.lato(fontSize: 14)),
                   ),
                   SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: _denyRequest,
-                    child: Text('Deny Request', style: GoogleFonts.lato(fontSize: 14)),
+                    child: Text('Deny Request',
+                        style: GoogleFonts.lato(fontSize: 14)),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.blue),
                     ),

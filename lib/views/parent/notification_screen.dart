@@ -13,6 +13,7 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   List<NotificationModel> notifications = [];
   String? userId;
   Set<String> processedNotificationIds = {};
@@ -59,9 +60,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   void _listenForNotifications(String userId) {
     notificationSubscription = FirebaseFirestore.instance
-        .collection('notifications')
-        .doc(userId)
-        .collection('user_notifications')
+        .collection('UserNotifications')
+        .where('targetUser', isEqualTo: userId)
         .orderBy('timestamp', descending: true)
         .snapshots()
         .listen((event) {
@@ -80,14 +80,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 setState(() {
                   notifications.add(notification);
                   processedNotificationIds.add(notification.id);
-                  notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+                  notifications
+                      .sort((a, b) => b.timestamp.compareTo(a.timestamp));
                 });
+                _listKey.currentState?.insertItem(0);
               }
             }
           }
         } else if (change.type == DocumentChangeType.removed) {
           // Notification removed, remove ID from processed set
-          processedNotificationIds.remove(change.doc.id);
+          int index = notifications.indexWhere((n) => n.id == change.doc.id);
+          if (index != -1) {
+            setState(() {
+              notifications.removeAt(index);
+              processedNotificationIds.remove(change.doc.id);
+            });
+            _listKey.currentState?.removeItem(index, (context, animation) {
+              return SizeTransition(
+                sizeFactor: animation,
+                child: _buildNotificationItem(notifications[index]),
+              );
+            });
+          }
         }
       }
     });
@@ -96,8 +110,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Future<void> _showLocalNotification(String title, String body) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
+      'metro001',
+      'metroshuttle',
       importance: Importance.max,
       priority: Priority.high,
       showWhen: false,
@@ -113,31 +127,36 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
+  Widget _buildNotificationItem(NotificationModel notification) {
+    final formattedDate =
+        DateFormat('yyyy-MM-dd – kk:mm').format(notification.timestamp);
+    return Card(
+      child: ListTile(
+        leading: Icon(Icons.notification_important, color: Colors.green),
+        title: Text(notification.title),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(notification.body),
+            SizedBox(height: 4.0),
+            Text(formattedDate,
+                style: TextStyle(fontSize: 12.0, color: Colors.grey)),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Notifications'),
-        backgroundColor: Colors.green,
-      ),
-      body: ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          final notification = notifications[index];
-          final formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(notification.timestamp);
-          return Card(
-            child: ListTile(
-              leading: Icon(Icons.notification_important, color: Colors.green),
-              title: Text(notification.title),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(notification.body),
-                  SizedBox(height: 4.0),
-                  Text(formattedDate, style: TextStyle(fontSize: 12.0, color: Colors.grey)),
-                ],
-              ),
-            ),
+      body: AnimatedList(
+        key: _listKey,
+        initialItemCount: notifications.length,
+        itemBuilder: (context, index, animation) {
+          return SizeTransition(
+            sizeFactor: animation,
+            child: _buildNotificationItem(notifications[index]),
           );
         },
       ),
@@ -163,7 +182,8 @@ class NotificationModel {
         id: json['id'] as String,
         title: json['title'] as String,
         body: json['body'] as String,
-        timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp'] as int),
+        timestamp:
+            DateTime.fromMillisecondsSinceEpoch(json['timestamp'] as int),
       );
 
   Map<String, dynamic> toJson() => {

@@ -122,18 +122,19 @@ Future<void> sendNotification(String userId, String title, String body) async {
     id: notificationId,
     title: title,
     body: body,
+    timestamp: DateTime.now(),
+    targetUser: userId,
   );
 
   try {
-    // Push notification data to user collection
+    // Push notification data to UserNotifications collection
     await FirebaseFirestore.instance
-      .collection('notifications')
-      .doc(userId)
-      .collection('user_notifications')
-      .doc(notificationId)
-      .set(notification.toJson());
+        .collection('UserNotifications')        
+        .add(notification.toJson());
     print("Notification sent to user: $userId");
   } catch (error) {
     print("Error sending notification: $error");
   }
 }
+
+
