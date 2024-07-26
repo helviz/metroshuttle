@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,28 @@ class _CoordinatorFormState extends State<CoordinatorForm> {
   final _emailController = TextEditingController();
   final _telephoneNumberController = TextEditingController();
   final _schoolNameController = TextEditingController();
+
+  late String userId;
+
+  @override
+  void initState() {
+    super.initState();
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      Get.snackbar('Error', 'No user is logged in!');
+    } else {
+      userId = currentUser.uid;
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _telephoneNumberController.dispose();
+    _schoolNameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,10 +103,11 @@ class _CoordinatorFormState extends State<CoordinatorForm> {
 
                     await FirebaseFirestore.instance
                         .collection('coordinators')
-                        .add(coordinator.toMap())
+                        .doc(userId)
+                        .set(coordinator.toMap())
                         .then((value) {
-                      print('Coordinator added with ID: ${value.id}');
-                      Get.offAll(() => CoordinatorHomeScreen(userId: value.id));
+                      print('Coordinator added with ID: $userId');
+                      Get.offAll(() => CoordinatorHomeScreen(userId: userId));
                     }).catchError((error) {
                       print('Error adding coordinator: $error');
                     });

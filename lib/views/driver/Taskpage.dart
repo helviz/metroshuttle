@@ -12,7 +12,7 @@ class TasksPage extends StatelessWidget {
     return querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
   }
 
-  void _handleDropoffChange(bool? value) {
+  void _handleDropoffChange(bool? value, ) {
     // Empty function to handle dropoff checkbox changes
   }
 
