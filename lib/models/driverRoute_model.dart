@@ -5,10 +5,8 @@ class DriverRoutes {
   String destination;
   DateTime startDate;
   DateTime endDate;
-  String? parentsName;
-  String? phoneNumber;
-  String? schoolAddress;
-  String? homeAddress;
+  String? parentsName; // Nullable
+  String? phoneNumber; // Nullable
   bool active;
   bool dropoff;
 
@@ -21,8 +19,6 @@ class DriverRoutes {
     required this.endDate,
     this.parentsName,
     this.phoneNumber,
-    this.schoolAddress,
-    this.homeAddress,
     this.active = true,
     this.dropoff = false,
   });
@@ -38,8 +34,6 @@ class DriverRoutes {
       endDate: DateTime.parse(json['endDate']),
       parentsName: json['parentsName'],
       phoneNumber: json['phoneNumber'],
-      schoolAddress: json['schoolAddress'],
-      homeAddress: json['homeAddress'],
       active: json['active'] ?? true,
       dropoff: json['dropoff'] ?? false,
     );
@@ -56,8 +50,6 @@ class DriverRoutes {
       'endDate': endDate.toIso8601String(),
       'parentsName': parentsName,
       'phoneNumber': phoneNumber,
-      'schoolAddress': schoolAddress,
-      'homeAddress': homeAddress,
       'active': active,
       'dropoff': dropoff,
     };

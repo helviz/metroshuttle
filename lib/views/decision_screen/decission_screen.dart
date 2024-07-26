@@ -33,15 +33,15 @@ class DecisionScreen extends StatelessWidget {
               height: 20,
             ),
             DecisionButton('assets/customer.png', 'Login As User', () {
-              authController.isLoginAsUser= true;
+              authController.isLoginAsDriver = false;
               Get.to(() => LoginScreen());
             }, Get.width * 0.8),
             const SizedBox(
               height: 20,
             ),
             DecisionButton('assets/customer.png', 'Login As Cordinator', () {
-              authController.isLoginAsCoordinator = true;
-              Get.to(() => LoginScreen());
+              authController.isLoginAsDriver = false;
+              Get.to(() => SchoolAdminPage());
             }, Get.width * 0.8),
             
           ],
