@@ -3,24 +3,28 @@ class DriverRoutes {
   String childsName;
   String pickupLocation;
   String destination;
-  DateTime startDate;
-  DateTime endDate;
-  String? parentsName; // Nullable
-  String? phoneNumber; // Nullable
+  DateTime? startDate;
+  DateTime? endDate;
+  String? parentID;
+  String? parentsName;
+  String? phoneNumber;
+  String? schoolAddress;
+  String? homeAddress;
   bool active;
-  bool dropoff;
 
   DriverRoutes({
     required this.driverId,
     required this.childsName,
     required this.pickupLocation,
     required this.destination,
-    required this.startDate,
-    required this.endDate,
+    this.startDate,
+    this.endDate,
+    this.parentID,
     this.parentsName,
     this.phoneNumber,
+    this.schoolAddress,
+    this.homeAddress,
     this.active = true,
-    this.dropoff = false,
   });
 
   // Factory constructor to create an instance from a JSON object
@@ -30,12 +34,14 @@ class DriverRoutes {
       childsName: json['childsName'],
       pickupLocation: json['pickupLocation'],
       destination: json['destination'],
-      startDate: DateTime.parse(json['startDate']),
-      endDate: DateTime.parse(json['endDate']),
+      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      parentID: json['parentID'],
       parentsName: json['parentsName'],
       phoneNumber: json['phoneNumber'],
+      schoolAddress: json['schoolAddress'],
+      homeAddress: json['homeAddress'],
       active: json['active'] ?? true,
-      dropoff: json['dropoff'] ?? false,
     );
   }
 
@@ -46,12 +52,14 @@ class DriverRoutes {
       'childsName': childsName,
       'pickupLocation': pickupLocation,
       'destination': destination,
-      'startDate': startDate.toIso8601String(),
-      'endDate': endDate.toIso8601String(),
+      'startDate': startDate?.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+      'parentID': parentID,
       'parentsName': parentsName,
       'phoneNumber': phoneNumber,
+      'schoolAddress': schoolAddress,
+      'homeAddress': homeAddress,
       'active': active,
-      'dropoff': dropoff,
     };
   }
 }

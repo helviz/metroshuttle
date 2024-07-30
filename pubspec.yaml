@@ -64,6 +64,7 @@ dependencies:
   geolocator: ^9.0.2
   http: ^0.13.3
   uuid: ^4.4.2
+  onesignal_flutter: ^3.0.0
   # flutter_local_notifications: ^9.3.0
 
 dev_dependencies:

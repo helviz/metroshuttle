@@ -91,7 +91,11 @@ class FirestoreService {
           startDate: DateTime.parse(schoolData['startDate'] ?? DateTime.now().toIso8601String()),
           endDate: DateTime.parse(schoolData['endDate'] ?? DateTime.now().toIso8601String()),
           parentsName: parentsName, // Fetch parent's name
-          phoneNumber: phoneNumber, // Fetch phone number
+          phoneNumber: phoneNumber,// Fetch phone number
+          homeAddress:schoolData['homeAddress'] ?? '',
+          schoolAddress: schoolData['schoolAddress'] ?? '', 
+          parentID: schoolData['userId'] ?? '', 
+          
         );
 
         // Convert the instance to JSON
