@@ -33,7 +33,7 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
             ),
             SizedBox(height: 20),
             CheckboxListTile(
-              title: Text('I agree to the terms and conditions'),
+              title: Text('I accept the terms and conditions'),
               value: _termsAndConditionsAccepted,
               onChanged: (value) {
                 setState(() {
@@ -46,7 +46,7 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
               onPressed: _termsAndConditionsAccepted
                   ? () {
                 _saveTermsAndConditionsAcceptance(true);
-                Navigator.pushReplacementNamed(context, '/');
+                Navigator.pushReplacementNamed(context, '/home');
               }
                   : null,
               child: Text('Accept and Continue'),
