@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -11,8 +11,8 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   List<NotificationModel> notifications = [];
   String? userId;
@@ -23,7 +23,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeNotifications();
+    // _initializeNotifications();
     _getCurrentUserId();
   }
 
@@ -33,15 +33,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
     super.dispose();
   }
 
-  void _initializeNotifications() {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-    );
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
+  // void _initializeNotifications() {
+  //   const AndroidInitializationSettings initializationSettingsAndroid =
+  //       AndroidInitializationSettings('@mipmap/ic_launcher');
+  //   final InitializationSettings initializationSettings =
+  //       InitializationSettings(
+  //     android: initializationSettingsAndroid,
+  //   );
+  //   flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // }
 
   Future<void> _getCurrentUserId() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -75,7 +75,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           if (notificationData != null) {
             final notification = NotificationModel.fromJson(notificationData);
             if (!processedNotificationIds.contains(notification.id)) {
-              _showLocalNotification(notification.title, notification.body);
+              // _showLocalNotification(notification.title, notification.body);
               if (mounted) {
                 setState(() {
                   notifications.add(notification);
@@ -107,25 +107,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
   }
 
-  Future<void> _showLocalNotification(String title, String body) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'metro001',
-      'metroshuttle',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: false,
-    );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      title,
-      body,
-      platformChannelSpecifics,
-      payload: 'item x',
-    );
-  }
+  // Future<void> _showLocalNotification(String title, String body) async {
+  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  //       AndroidNotificationDetails(
+  //     'metro001',
+  //     'metroshuttle',
+  //     importance: Importance.max,
+  //     priority: Priority.high,
+  //     showWhen: false,
+  //   );
+  //   const NotificationDetails platformChannelSpecifics =
+  //       NotificationDetails(android: androidPlatformChannelSpecifics);
+  //   await flutterLocalNotificationsPlugin.show(
+  //     0,
+  //     title,
+  //     body,
+  //     platformChannelSpecifics,
+  //     payload: 'item x',
+  //   );
+  // }
 
   Widget _buildNotificationItem(NotificationModel notification) {
     final formattedDate =

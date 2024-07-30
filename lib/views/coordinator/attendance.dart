@@ -105,7 +105,14 @@ class _ChildArrivalTableState extends State<ChildArrivalTable> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             print('No data found'); // Debug print
-            return Center(child: Text('No data found'));
+            return const Center(
+                            child: Text(
+                              'No data found',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              )));
           } else {
             List<Map<String, String>> data = snapshot.data!;
             return SingleChildScrollView(

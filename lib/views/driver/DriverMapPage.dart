@@ -13,8 +13,10 @@ class DriverMapPage extends StatefulWidget {
 
 class _DriverMapPageState extends State<DriverMapPage> {
   GoogleMapController? _controller;
-  LatLng _initialPosition = LatLng(0.3476, 32.5825); // Kampala coordinates
+  LatLng _initialPosition = LatLng(0.3476, 32.5825);
   Set<Marker> _markers = {};
+  Set<Marker> _homeMarkers = {};
+  Set<Marker> _schoolMarkers = {};
   Set<Polyline> _polylines = {};
   bool _isPickupToDestination = true;
   LatLng? _currentLocation;
@@ -88,23 +90,24 @@ class _DriverMapPageState extends State<DriverMapPage> {
       LatLng destinationLatLng = _parseCoordinates(destinationLocation);
 
       setState(() {
-        _markers.add(
-          Marker(
-            markerId: MarkerId('pickup_${doc.id}'),
-            position: pickupLatLng,
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-            infoWindow: InfoWindow(title: 'Pickup: $childsName', snippet: 'HOME'),
-          ),
+        Marker homeMarker = Marker(
+          markerId: MarkerId('pickup_${doc.id}'),
+          position: pickupLatLng,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          infoWindow: InfoWindow(title: 'Pickup: $childsName', snippet: 'HOME'),
+          onTap: () => _showRemoveMarkerDialog('pickup_${doc.id}'),
         );
 
-        _markers.add(
-          Marker(
-            markerId: MarkerId('destination_${doc.id}'),
-            position: destinationLatLng,
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-            infoWindow: InfoWindow(title: 'Destination: $childsName', snippet: 'SCHOOL'),
-          ),
+        Marker schoolMarker = Marker(
+          markerId: MarkerId('destination_${doc.id}'),
+          position: destinationLatLng,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          infoWindow: InfoWindow(title: 'Destination: $childsName', snippet: 'SCHOOL'),
+          onTap: () => _showRemoveMarkerDialog('destination_${doc.id}'),
         );
+
+        _homeMarkers.add(homeMarker);
+        _schoolMarkers.add(schoolMarker);
 
         _drawRoute(pickupLatLng, destinationLatLng);
       });
@@ -200,6 +203,40 @@ class _DriverMapPageState extends State<DriverMapPage> {
     }
   }
 
+  void _showMarkers(Set<Marker> markersToShow) {
+    setState(() {
+      _markers.clear();
+      _markers.addAll(markersToShow);
+    });
+  }
+
+  void _showRemoveMarkerDialog(String markerId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Remove Marker'),
+        content: Text('Do you want to remove this marker?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _markers.removeWhere((marker) => marker.markerId.value == markerId);
+                _homeMarkers.removeWhere((marker) => marker.markerId.value == markerId);
+                _schoolMarkers.removeWhere((marker) => marker.markerId.value == markerId);
+              });
+              Navigator.of(context).pop();
+            },
+            child: Text('Yes'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('No'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,9 +261,26 @@ class _DriverMapPageState extends State<DriverMapPage> {
           Positioned(
             bottom: 20,
             left: 10,
-            child: FloatingActionButton(
-              onPressed: _showCurrentLocation,
-              child: Icon(Icons.my_location),
+            child: Column(
+              children: [
+                FloatingActionButton(
+                  onPressed: () => _showMarkers(_homeMarkers),
+                  child: Icon(Icons.home),
+                  tooltip: 'Show Home Markers',
+                ),
+                SizedBox(height: 10),
+                FloatingActionButton(
+                  onPressed: () => _showMarkers(_schoolMarkers),
+                  child: Icon(Icons.school),
+                  tooltip: 'Show School Markers',
+                ),
+                SizedBox(height: 10),
+                FloatingActionButton(
+                  onPressed: _showCurrentLocation,
+                  child: Icon(Icons.my_location),
+                  tooltip: 'Show Current Location',
+                ),
+              ],
             ),
           ),
         ],
