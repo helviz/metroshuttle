@@ -1,4 +1,4 @@
-// settings_screen.dart
+// coordinator/settings.dart
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,19 +14,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadTheme();
+    _loadSettings();
   }
 
-  _loadTheme() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isDarkMode = prefs.getBool('isDarkMode') ?? false;
     });
   }
 
-  _saveTheme(bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isDarkMode', value);
+  Future<void> _saveSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', _isDarkMode);
+  }
+
+  void _toggleDarkMode() {
+    setState(() {
+      _isDarkMode = !_isDarkMode;
+    });
+    _saveSettings();
   }
 
   @override
@@ -39,33 +46,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SwitchListTile(
-              title: Text('Dark Mode'),
-              value: _isDarkMode,
-              onChanged: (value) {
-                setState(() {
-                  _isDarkMode = value;
-                });
-                _saveTheme(value);
-                // Update the app's theme accordingly
-                if (value) {
-                  ThemeData.dark().copyWith();
-                } else {
-                  ThemeData.light().copyWith();
-                }
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Dark Mode'),
+                Switch(
+                  value: _isDarkMode,
+                  onChanged: (value) {
+                    _toggleDarkMode();
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Log out the coordinator
-                // You can add your own logic here to log out the coordinator
-                // For example, you can clear the shared preferences or navigate to the login screen
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.clear();
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-              child: Text('Log Out'),
+            SizedBox(height: 16),
+            Text(
+              _isDarkMode
+                  ? 'You are currently in Dark Mode.'
+                  : 'You are currently in Light Mode.',
             ),
           ],
         ),
