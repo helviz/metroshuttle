@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:metroshuttle/views/decision_screen/decission_screen.dart';
 import 'package:metroshuttle/views/driver/DriverMapPage.dart';
 import 'package:metroshuttle/views/driver/RequestsPage.dart';
+import 'package:metroshuttle/views/driver/Taskpage.dart';
 import 'package:metroshuttle/views/login_screen.dart';
 
 class DriverHomeScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   final List<Widget> _pages = [
     RequestsPage(),
     DriverMapPage(),
+    TasksPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -66,6 +68,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
             label: 'Map',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Tasks',
           ),
         ],
         currentIndex: _selectedIndex,
