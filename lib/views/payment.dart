@@ -1,145 +1,195 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_credit_card/credit_card_brand.dart';
-// import 'package:flutter_credit_card/flutter_credit_card.dart';
-// import 'package:get/get.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:metroshuttle/controller/auth_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_credit_card/flutter_credit_card.dart';
 
-// import '../utils/app_colors.dart';
-// import '../widgets/green_intro_widget.dart';
-// import 'add_payment_card_screen.dart';
+class PaymentScreen extends StatefulWidget {
+  @override
+  _PaymentScreenState createState() => _PaymentScreenState();
+}
 
+class _PaymentScreenState extends State<PaymentScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Payment'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              'Choose a payment method:',
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MobileMoneyPayment()),
+                    );
+                  },
+                  child: Text('Mobile Money'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CreditCardPayment()),
+                    );
+                  },
+                  child: Text('Credit Card'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-// class PaymentScreen extends StatefulWidget {
-//   @override
-//   State<StatefulWidget> createState() {
-//     return PaymentScreenState();
-//   }
-// }
+class MobileMoneyPayment extends StatefulWidget {
+  @override
+  _MobileMoneyPaymentState createState() => _MobileMoneyPaymentState();
+}
 
-// class PaymentScreenState extends State<PaymentScreen> {
-//   String cardNumber = '5555 55555 5555 4444';
-//   String expiryDate = '12/25';
-//   String cardHolderName = 'Osama Qureshi';
-//   String cvvCode = '123';
-//   bool isCvvFocused = false;
-//   bool useGlassMorphism = false;
-//   bool useBackgroundImage = false;
-//   OutlineInputBorder? border;
-//   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+class _MobileMoneyPaymentState extends State<MobileMoneyPayment> {
+  final _formKey = GlobalKey<FormState>();
+  String _phoneNumber = '';
 
-//   AuthController authController = Get.find<AuthController>();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Mobile Money Payment'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter your phone number';
+                  }
+                  return null;
+                },
+                onSaved: (value) => _phoneNumber = value!,
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    // Process mobile money payment here
+                    print('Mobile money payment processed');
+                  }
+                },
+                child: Text('Pay with Mobile Money'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
+class CreditCardPayment extends StatefulWidget {
+  @override
+  _CreditCardPaymentState createState() => _CreditCardPaymentState();
+}
 
-//   @override
-//   void initState() {
+class _CreditCardPaymentState extends State<CreditCardPayment> {
+  final _formKey = GlobalKey<FormState>();
+  String _cardNumber = '';
+  String _expiryDate = '';
+  String _cvv = '';
 
-//     authController.getUserCards();
-//     border = OutlineInputBorder(
-//       borderSide: BorderSide(
-//         color: Colors.grey.withOpacity(0.7),
-//         width: 2.0,
-//       ),
-//     );
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       resizeToAvoidBottomInset: false,
-//       body: Container(
-//         width: Get.width,
-//         height: Get.height,
-//         child: Stack(
-//           children: <Widget>[
-
-//             greenIntroWidgetWithoutLogos(title: 'My Card'),
-
-
-//             Positioned(
-//               top: 120,
-//               left: 0,
-//               right: 0,
-//               bottom: 80,
-//               child: Obx(()=> ListView.builder(
-
-//                 shrinkWrap: true,
-//                 itemBuilder: (ctx,i) {
-
-//                   String cardNumber = '';
-//                   String expiryDate = '';
-//                   String cardHolderName = '';
-//                   String cvvCode = '';
-
-//                   try{
-//                     cardNumber = authController.userCards.value[i].get('number');
-//                   }catch(e){
-//                     cardNumber = '';
-//                   }
-
-//                   try{
-//                     expiryDate = authController.userCards.value[i].get('expiry');
-//                   }catch(e){
-//                     expiryDate = '';
-//                   }
-
-//                   try{
-//                     cardHolderName = authController.userCards.value[i].get('name');
-//                   }catch(e){
-//                     cardHolderName = '';
-//                   }
-
-//                   try{
-//                     cvvCode = authController.userCards.value[i].get('cvv');
-//                   }catch(e){
-//                     cvvCode = '';
-//                   }
-
-//                   return CreditCardWidget(
-//                     cardBgColor: Colors.black,
-//                     cardNumber: cardNumber,
-//                     expiryDate: expiryDate,
-//                     cardHolderName: cardHolderName,
-//                     cvvCode: cvvCode,
-//                     bankName: '',
-//                     showBackView: isCvvFocused,
-//                     obscureCardNumber: true,
-//                     obscureCardCvv: true,
-//                     isHolderNameVisible: true,
-//                     isSwipeGestureEnabled: true,
-//                     onCreditCardWidgetChange:
-//                         (CreditCardBrand creditCardBrand) {},
-
-//                   );
-//                 },itemCount: authController.userCards.length,)),
-//             ),
-
-//             Positioned(
-//                 bottom: 10,
-//                 right: 10,
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.end,
-//                   children: [
-//                     Text("Add new card",style: GoogleFonts.poppins(fontSize: 18,fontWeight: FontWeight.bold,color: AppColors.greenColor),),
-
-//                     SizedBox(width: 10,),
-
-//                     FloatingActionButton(onPressed: (){
-
-
-//                       Get.to(()=> AddPaymentCardScreen());
-
-//                     },child: Icon(Icons.arrow_forward,color: Colors.white,),backgroundColor: AppColors.greenColor,)
-//                   ],
-//                 ))
-
-
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Credit Card Payment'),
+        ),
+        body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+                key: _formKey,
+                child: Column(children: [
+                  CreditCardWidget(
+                    cardNumber: _cardNumber,
+                    expiryDate: _expiryDate,
+                    cvvCode: _cvv,
+                    showBackView: false,
+                    cardHolderName: '',
+                    onCreditCardWidgetChange: (CreditCardBrand) {},
+                  ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Card Number',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter your card number';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => _cardNumber = value!,
+                  ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Expiry Date',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter your expiry date';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => _expiryDate = value!,
+                  ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'CVV',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter your CVV';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => _cvv = value!,
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        // Process credit card payment here
+                        print('Credit card payment processed');
+                      }
+                    },
+                    child: Text('Pay with Credit Card'),
+                  )
+                ]))));
+  }
+}

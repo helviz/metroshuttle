@@ -37,7 +37,7 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
               value: _termsAndConditionsAccepted,
               onChanged: (value) {
                 setState(() {
-                  _termsAndConditionsAccepted = value;
+                  _termsAndConditionsAccepted = value!;
                 });
               },
             ),
@@ -45,9 +45,9 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
             ElevatedButton(
               onPressed: _termsAndConditionsAccepted
                   ? () {
-                _saveTermsAndConditionsAcceptance(true);
-                Navigator.pushReplacementNamed(context, '/home');
-              }
+                      _saveTermsAndConditionsAcceptance(true);
+                      Navigator.pushReplacementNamed(context, '/home');
+                    }
                   : null,
               child: Text('Accept and Continue'),
             ),
