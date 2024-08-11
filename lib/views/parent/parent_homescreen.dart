@@ -6,6 +6,7 @@ import 'package:metroshuttle/views/decision_screen/decission_screen.dart';
 import 'package:metroshuttle/views/my_profile.dart';
 import 'package:metroshuttle/views/parent/ParentsRequestsPage.dart';
 import 'package:metroshuttle/views/parent/notification_screen.dart';
+import 'package:metroshuttle/views/payment.dart';
 
 class ParentHomeScreen extends StatefulWidget {
   final String userId;
@@ -161,6 +162,13 @@ class _ParentSidePanelState extends State<ParentSidePanel> {
             title: Text('Profile'),
             onTap: () {
               Get.to(() => ProfilePage());
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.payment),
+            title: Text('Payment'),
+            onTap: () {
+              Get.to(() => PaymentScreen());
             },
           ),
           ListTile(

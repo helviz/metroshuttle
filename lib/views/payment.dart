@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
-
+import '../widgets/green_intro_widget.dart';
 class PaymentScreen extends StatefulWidget {
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
@@ -17,10 +17,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
-              'Choose a payment method:',
-              style: TextStyle(fontSize: 18),
-            ),
+            greenIntroWidgetWithoutLogos(title: 'Choose a payment method'),
             SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -71,36 +68,41 @@ class _MobileMoneyPaymentState extends State<MobileMoneyPayment> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _phoneNumber = value!,
+        child: Column(
+          children: [
+            greenIntroWidgetWithoutLogos(title: 'Mobile Money Payment'),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter your phone number';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => _phoneNumber = value!,
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        // Process mobile money payment here
+                        print('Mobile money payment processed');
+                      }
+                    },
+                    child: Text('Pay with Mobile Money'),
+                  ),
+                ],
               ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    // Process mobile money payment here
-                    print('Mobile money payment processed');
-                  }
-                },
-                child: Text('Pay with Mobile Money'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -121,14 +123,18 @@ class _CreditCardPaymentState extends State<CreditCardPayment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Credit Card Payment'),
-        ),
-        body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-                key: _formKey,
-                child: Column(children: [
+      appBar: AppBar(
+        title: Text('Credit Card Payment'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            greenIntroWidgetWithoutLogos(title: 'Credit Card Payment'),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
                   CreditCardWidget(
                     cardNumber: _cardNumber,
                     expiryDate: _expiryDate,
@@ -184,12 +190,8 @@ class _CreditCardPaymentState extends State<CreditCardPayment> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        // Process credit card payment here
+                        // Process credit card
                         print('Credit card payment processed');
-                      }
-                    },
-                    child: Text('Pay with Credit Card'),
-                  )
-                ]))));
-  }
-}
+                      }}, child: Text('Pay with credit card'),
+                      )
+                    ]))])));}}
