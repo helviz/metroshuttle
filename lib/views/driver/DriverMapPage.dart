@@ -94,16 +94,31 @@ class _DriverMapPageState extends State<DriverMapPage> {
           markerId: MarkerId('pickup_${doc.id}'),
           position: pickupLatLng,
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          infoWindow: InfoWindow(title: 'Pickup: $childsName', snippet: 'HOME'),
-          onTap: () => _showRemoveMarkerDialog('pickup_${doc.id}'),
+          infoWindow: InfoWindow(
+              title: 'Pickup: $childsName',
+              snippet: 'HOME',
+          // onTap: () => _showRemoveMarkerDialog('pickup_${doc.id}'),
+          ),
+        );
+        GestureDetector(
+          onDoubleTap: () => _showRemoveMarkerDialog('pickup_${doc.id}'),
         );
 
         Marker schoolMarker = Marker(
           markerId: MarkerId('destination_${doc.id}'),
           position: destinationLatLng,
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-          infoWindow: InfoWindow(title: 'Destination: $childsName', snippet: 'SCHOOL'),
-          onTap: () => _showRemoveMarkerDialog('destination_${doc.id}'),
+          infoWindow: InfoWindow(
+              title: 'Destination: $childsName',
+              snippet: 'SCHOOL',
+          // onTap: () => _showRemoveMarkerDialog('destination_${doc.id}'),
+          ),
+        );
+        GestureDetector(
+          onDoubleTap: () => _showRemoveMarkerDialog('destination_${doc.id}'),
+          // child: GoogleMap(
+          //   markers: {schoolMarker},
+          // ),
         );
 
         _homeMarkers.add(homeMarker);
