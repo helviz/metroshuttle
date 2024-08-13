@@ -54,16 +54,19 @@ class _DriverMapPageState extends State<DriverMapPage> {
     _locationData = await location.getLocation();
 
     setState(() {
-      _currentLocation = LatLng(_locationData.latitude!, _locationData.longitude!);
+      _currentLocation =
+          LatLng(_locationData.latitude!, _locationData.longitude!);
       _markers.add(
         Marker(
           markerId: MarkerId('currentLocation'),
           position: _currentLocation!,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
           infoWindow: InfoWindow(title: 'Current Location'),
         ),
       );
-      _controller?.animateCamera(CameraUpdate.newLatLngZoom(_currentLocation!, 15));
+      _controller
+          ?.animateCamera(CameraUpdate.newLatLngZoom(_currentLocation!, 15));
     });
   }
 
@@ -79,7 +82,10 @@ class _DriverMapPageState extends State<DriverMapPage> {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference driverRoutes = firestore.collection('driverRoutes');
 
-    QuerySnapshot querySnapshot = await driverRoutes.where('driverId', isEqualTo: userId).get();
+    QuerySnapshot querySnapshot = await driverRoutes
+        .where('driverId', isEqualTo: userId)
+        .where('active', isEqualTo: true)
+        .get();
 
     querySnapshot.docs.forEach((doc) {
       String pickupLocation = doc['pickupLocation'];
@@ -95,15 +101,17 @@ class _DriverMapPageState extends State<DriverMapPage> {
           position: pickupLatLng,
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           infoWindow: InfoWindow(title: 'Pickup: $childsName', snippet: 'HOME'),
-          onTap: () => _showRemoveMarkerDialog('pickup_${doc.id}'),
+          // onTap: () => _showRemoveMarkerDialog('pickup_${doc.id}'),
         );
 
         Marker schoolMarker = Marker(
           markerId: MarkerId('destination_${doc.id}'),
           position: destinationLatLng,
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-          infoWindow: InfoWindow(title: 'Destination: $childsName', snippet: 'SCHOOL'),
-          onTap: () => _showRemoveMarkerDialog('destination_${doc.id}'),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          infoWindow:
+              InfoWindow(title: 'Destination: $childsName', snippet: 'SCHOOL'),
+          // onTap: () => _showRemoveMarkerDialog('destination_${doc.id}'),
         );
 
         _homeMarkers.add(homeMarker);
@@ -132,7 +140,8 @@ class _DriverMapPageState extends State<DriverMapPage> {
     var requestBody = {
       'originAddresses': ['${start.latitude},${start.longitude}'],
       'destinationAddresses': ['${end.latitude},${end.longitude}'],
-      'travelMode': 'DRIVING', // Use 'DRIVE' or 'DRIVING' as per the API specification
+      'travelMode':
+          'DRIVING', // Use 'DRIVE' or 'DRIVING' as per the API specification
     };
 
     var response = await http.post(
@@ -197,7 +206,8 @@ class _DriverMapPageState extends State<DriverMapPage> {
 
   void _showCurrentLocation() {
     if (_currentLocation != null) {
-      _controller?.animateCamera(CameraUpdate.newLatLngZoom(_currentLocation!, 15));
+      _controller
+          ?.animateCamera(CameraUpdate.newLatLngZoom(_currentLocation!, 15));
     } else {
       _getCurrentLocation();
     }
@@ -220,9 +230,12 @@ class _DriverMapPageState extends State<DriverMapPage> {
           TextButton(
             onPressed: () {
               setState(() {
-                _markers.removeWhere((marker) => marker.markerId.value == markerId);
-                _homeMarkers.removeWhere((marker) => marker.markerId.value == markerId);
-                _schoolMarkers.removeWhere((marker) => marker.markerId.value == markerId);
+                _markers
+                    .removeWhere((marker) => marker.markerId.value == markerId);
+                _homeMarkers
+                    .removeWhere((marker) => marker.markerId.value == markerId);
+                _schoolMarkers
+                    .removeWhere((marker) => marker.markerId.value == markerId);
               });
               Navigator.of(context).pop();
             },
@@ -247,7 +260,7 @@ class _DriverMapPageState extends State<DriverMapPage> {
               target: _initialPosition,
               zoom: 12.0,
             ),
-            mapType: MapType.hybrid, // Set map type to hybrid
+            mapType: MapType.hybrid, 
             onMapCreated: (controller) {
               setState(() {
                 _controller = controller;

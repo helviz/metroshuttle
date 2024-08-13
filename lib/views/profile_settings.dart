@@ -20,6 +20,48 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   File? _imageFile;
   bool _isLoading = false;
+  bool _isExistingUser = false;
+  bool _isDataLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        Get.snackbar('Error', 'No user is logged in!');
+        return;
+      }
+      String userId = currentUser.uid;
+
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (userDoc.exists) {
+        _isExistingUser = true;
+        var data = userDoc.data() as Map<String, dynamic>;
+
+        _nameController.text = data['name'] ?? '';
+        _phoneNumberController.text = data['phoneNumber'] ?? '';
+        
+        if (data['imageUrl'] != null && data['imageUrl'].isNotEmpty) {
+          // If there’s an image URL, don’t set _imageFile as we’re not loading the image here
+        }
+      }
+
+      setState(() {
+        _isDataLoaded = true; // Mark the data as loaded
+      });
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load profile data!');
+    }
+  }
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -33,7 +75,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
   }
 
   Future<void> _uploadProfile() async {
-    if (_nameController.text.isEmpty || _phoneNumberController.text.isEmpty || _imageFile == null) {
+    if (_nameController.text.isEmpty || _phoneNumberController.text.isEmpty) {
       Get.snackbar('Error', 'All fields are required!');
       return;
     }
@@ -43,7 +85,6 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
     });
 
     try {
-      // Get the current user
       User? currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser == null) {
         Get.snackbar('Error', 'No user is logged in!');
@@ -51,29 +92,38 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
       }
       String userId = currentUser.uid;
 
-      // Upload image to Firebase Storage
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('profile_pictures')
-          .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
-      await storageRef.putFile(_imageFile!);
-      final imageUrl = await storageRef.getDownloadURL();
+      String? imageUrl;
 
-      // Save user data to Firestore
-      final parent = Parent(
+      if (_imageFile != null) {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('profile_pictures')
+            .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+        await storageRef.putFile(_imageFile!);
+        imageUrl = await storageRef.getDownloadURL();
+      }
+
+      final parent = UserParent(
         name: _nameController.text,
         phoneNumber: _phoneNumberController.text,
-        imageUrl: imageUrl,
+        imageUrl: imageUrl ?? '', // Save new or existing image URL
+        userType: 'user',
       );
 
-      await FirebaseFirestore.instance.collection('users').doc(userId).set(parent.toMap());
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .set(parent.toMap(), SetOptions(merge: true)); // Merge data to avoid overwriting fields
 
-      Get.snackbar('Success', 'Profile created successfully!');
+      Get.snackbar(
+          'Success',
+          _isExistingUser
+              ? 'Profile updated successfully!'
+              : 'Profile created successfully!');
 
-      // Navigate to ParentHomeScreen with userId
-      Get.offAll(() => ParentHomeScreen(userId: userId)); 
+      Get.offAll(() => ParentHomeScreen(userId: userId));
     } catch (e) {
-      Get.snackbar('Error', 'Failed to create profile!');
+      Get.snackbar('Error', 'Failed to save profile!');
     } finally {
       setState(() {
         _isLoading = false;
@@ -90,41 +140,43 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
             greenIntroWidgetWithoutLogos(title: 'PROFILE SETUP', subtitle: 'Fill In Your Details'),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  if (_imageFile != null)
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: FileImage(_imageFile!),
-                    )
-                  else
-                    CircleAvatar(
-                      radius: 50,
-                      child: Icon(Icons.person, size: 50),
-                    ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _pickImage,
-                    child: Text('Upload Profile Picture'),
-                  ),
-                  TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(labelText: 'Name'),
-                  ),
-                  TextField(
-                    controller: _phoneNumberController,
-                    decoration: InputDecoration(labelText: 'Phone Number'),
-                    keyboardType: TextInputType.phone,
-                  ),
-                  SizedBox(height: 20),
-                  _isLoading
-                      ? CircularProgressIndicator()
-                      : ElevatedButton(
-                          onPressed: _uploadProfile,
-                          child: Text('Create Profile'),
+              child: _isDataLoaded
+                  ? Column(
+                      children: [
+                        if (_imageFile != null)
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage: FileImage(_imageFile!),
+                          )
+                        else
+                          CircleAvatar(
+                            radius: 50,
+                            child: Icon(Icons.person, size: 50),
+                          ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: _pickImage,
+                          child: Text('Upload Profile Picture'),
                         ),
-                ],
-              ),
+                        TextField(
+                          controller: _nameController,
+                          decoration: InputDecoration(labelText: 'Name'),
+                        ),
+                        TextField(
+                          controller: _phoneNumberController,
+                          decoration: InputDecoration(labelText: 'Phone Number'),
+                          keyboardType: TextInputType.phone,
+                        ),
+                        SizedBox(height: 20),
+                        _isLoading
+                            ? CircularProgressIndicator()
+                            : ElevatedButton(
+                                onPressed: _uploadProfile,
+                                child: Text('Submit'),
+                              ),
+                      ],
+                    )
+                  : Center(child: CircularProgressIndicator()), // Show a loading indicator while data is loading
             ),
           ],
         ),

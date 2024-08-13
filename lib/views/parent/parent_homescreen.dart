@@ -7,6 +7,7 @@ import 'package:metroshuttle/views/my_profile.dart';
 import 'package:metroshuttle/views/parent/ParentsRequestsPage.dart';
 import 'package:metroshuttle/views/parent/notification_screen.dart';
 import 'package:metroshuttle/views/payment.dart';
+import 'package:metroshuttle/views/profile_settings.dart';
 
 class ParentHomeScreen extends StatefulWidget {
   final String userId;
@@ -161,7 +162,7 @@ class _ParentSidePanelState extends State<ParentSidePanel> {
             leading: Icon(Icons.person),
             title: Text('Profile'),
             onTap: () {
-              Get.to(() => ProfilePage());
+              Get.to(() => ProfileSettingScreen());
             },
           ),
           ListTile(

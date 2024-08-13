@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:metroshuttle/views/decision_screen/decission_screen.dart';
 import 'package:metroshuttle/views/driver/DriverMapPage.dart';
 import 'package:metroshuttle/views/driver/RequestsPage.dart';
 import 'package:metroshuttle/views/driver/Taskpage.dart';
-import 'package:metroshuttle/views/login_screen.dart';
+import 'package:metroshuttle/views/driver/profile_setup.dart';
+import 'package:metroshuttle/views/my_profile.dart';
+import 'package:metroshuttle/views/payment.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   final String userId;
@@ -33,7 +36,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
   void _logout() async {
     await FirebaseAuth.instance.signOut();
-    Get.offAll(() => DecisionScreen()); // Navigate to login page
+    Get.offAll(() => DecisionScreen());
   }
 
   @override
@@ -48,16 +51,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             _scaffoldKey.currentState?.openDrawer();
           },
         ),
-        title: Stack(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text("METROSHUTTLE"),
-            ),
-          ],
-        ),
+        title: Text("METRO SHUTTLE"),
       ),
-      drawer: SidePanel(logoutCallback: _logout),
+      drawer: DriverSidePanel(logoutCallback: _logout, userId: widget.userId),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -82,10 +78,55 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   }
 }
 
-class SidePanel extends StatelessWidget {
+class DriverSidePanel extends StatefulWidget {
   final VoidCallback logoutCallback;
+  final String userId;
 
-  const SidePanel({Key? key, required this.logoutCallback}) : super(key: key);
+  const DriverSidePanel(
+      {Key? key, required this.logoutCallback, required this.userId})
+      : super(key: key);
+
+  @override
+  _DriverSidePanelState createState() => _DriverSidePanelState();
+}
+
+class _DriverSidePanelState extends State<DriverSidePanel> {
+  String? _imageUrl;
+  String? _userName;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userDoc.exists) {
+          setState(() {
+            _imageUrl = userDoc['imageUrl'];
+            _userName = userDoc['driverName'];
+          });
+        } else {
+          setState(() {
+            _imageUrl = null;
+            _userName = "User";
+          });
+        }
+      } catch (e) {
+        setState(() {
+          _imageUrl = null;
+          _userName = "User";
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,19 +138,38 @@ class SidePanel extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.green,
             ),
-            child: Text(
-              'Menu',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage: _imageUrl != null
+                      ? NetworkImage(_imageUrl!)
+                      : AssetImage('assets/person.png') as ImageProvider,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  _userName ?? 'User',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ],
             ),
           ),
           ListTile(
             leading: Icon(Icons.person),
             title: Text('Profile'),
             onTap: () {
-              // Navigate to Profile Page
+              Get.to(() => DriverProfileSetup(userId: widget.userId));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.payment),
+            title: Text('Payment'),
+            onTap: () {
+              Get.to(() => PaymentScreen());
             },
           ),
           ListTile(
@@ -122,7 +182,7 @@ class SidePanel extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.logout),
             title: Text('Logout'),
-            onTap: logoutCallback,
+            onTap: widget.logoutCallback,
           ),
         ],
       ),

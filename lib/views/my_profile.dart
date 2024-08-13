@@ -52,10 +52,11 @@ class _ProfilePageState extends State<ProfilePage> {
       final imageUrl = await storageRef.getDownloadURL();
 
       // Save user data to Firestore
-      final parent = Parent(
+      final parent = UserParent(
         name: _parentnameController.text,
         phoneNumber: _phoneNumberController.text,
         imageUrl: imageUrl,
+        userType: 'user',
       );
 
       await FirebaseFirestore.instance.collection('users').add(parent.toMap());

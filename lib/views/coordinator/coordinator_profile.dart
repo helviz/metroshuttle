@@ -1,16 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:metroshuttle/models/user_parent.dart';
-import 'package:metroshuttle/views/coordinator/register_coordinator.dart';
+import 'package:metroshuttle/models/coordinator_model.dart';
+import 'package:metroshuttle/views/coordinator/coordinator_homescreen.dart';
 import 'package:metroshuttle/widgets/green_intro_widget.dart';
 
 class CoordinatorProfile extends StatefulWidget {
+  final String userId;
+
+  const CoordinatorProfile({Key? key, required this.userId}) : super(key: key);
+
   @override
   _CoordinatorProfileState createState() => _CoordinatorProfileState();
 }
@@ -18,8 +20,44 @@ class CoordinatorProfile extends StatefulWidget {
 class _CoordinatorProfileState extends State<CoordinatorProfile> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _schoolNameController = TextEditingController();
   File? _imageFile;
   bool _isLoading = false;
+  bool _isExistingUser = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .get();
+
+      if (userDoc.exists) {
+        _isExistingUser = true;
+        var data = userDoc.data() as Map<String, dynamic>;
+
+        setState(() {
+          _nameController.text = data['name'] ?? '';
+          _phoneNumberController.text = data['telephoneNumber'] ?? '';
+          _emailController.text = data['email'] ?? '';
+          _schoolNameController.text = data['schoolName'] ?? '';
+          // Load image from URL if available
+          if (data['imageUrl'] != null && data['imageUrl'].isNotEmpty) {
+            _imageFile = null; // Clear the local image file if loading from URL
+          }
+        });
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load profile data!');
+    }
+  }
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -33,7 +71,10 @@ class _CoordinatorProfileState extends State<CoordinatorProfile> {
   }
 
   Future<void> _uploadProfile() async {
-    if (_nameController.text.isEmpty || _phoneNumberController.text.isEmpty || _imageFile == null) {
+    if (_nameController.text.isEmpty ||
+        _phoneNumberController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _schoolNameController.text.isEmpty) {
       Get.snackbar('Error', 'All fields are required!');
       return;
     }
@@ -43,37 +84,41 @@ class _CoordinatorProfileState extends State<CoordinatorProfile> {
     });
 
     try {
-      // Get the current user
-      User? currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
-        Get.snackbar('Error', 'No user is logged in!');
-        return;
+      String userId = widget.userId;
+      String? imageUrl;
+
+      if (_imageFile != null) {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('profile_pictures')
+            .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+        await storageRef.putFile(_imageFile!);
+        imageUrl = await storageRef.getDownloadURL();
       }
-      String userId = currentUser.uid;
 
-      // Upload image to Firebase Storage
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('profile_pictures')
-          .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
-      await storageRef.putFile(_imageFile!);
-      final imageUrl = await storageRef.getDownloadURL();
-
-      // Save user data to Firestore
-      final parent = Parent(
+      final coordinator = COORDINATOR(
         name: _nameController.text,
-        phoneNumber: _phoneNumberController.text,
-        imageUrl: imageUrl,
+        email: _emailController.text,
+        telephoneNumber: _phoneNumberController.text,
+        schoolName: _schoolNameController.text,
+        imageUrl: imageUrl ?? '', // Save new or existing image URL
+        userType: 'coordinator',
       );
 
-      await FirebaseFirestore.instance.collection('users').doc(userId).set(parent.toMap());
+      await FirebaseFirestore.instance.collection('users').doc(userId).set(
+            coordinator.toMap(),
+            SetOptions(merge: true), // Merge data to avoid overwriting fields
+          );
 
-      Get.snackbar('Success', 'Profile created successfully!');
+      Get.snackbar(
+          'Success',
+          _isExistingUser
+              ? 'Profile updated successfully!'
+              : 'Profile created successfully!');
 
-      // Navigate to CoordinatorForm after successful profile creation
-      Get.offAll(() => CoordinatorForm());
+      Get.offAll(() => CoordinatorHomeScreen(userId: userId));
     } catch (e) {
-      Get.snackbar('Error', 'Failed to create profile!');
+      Get.snackbar('Error', 'Failed to save profile!');
     } finally {
       setState(() {
         _isLoading = false;
@@ -87,7 +132,8 @@ class _CoordinatorProfileState extends State<CoordinatorProfile> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            greenIntroWidgetWithoutLogos(title: 'PROFILE SETUP', subtitle: 'Fill In Your Details'),
+            greenIntroWidgetWithoutLogos(
+                title: 'PROFILE SETUP', subtitle: 'Fill In Your Details'),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -112,16 +158,25 @@ class _CoordinatorProfileState extends State<CoordinatorProfile> {
                     decoration: InputDecoration(labelText: 'Name'),
                   ),
                   TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(labelText: 'Email'),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  TextField(
                     controller: _phoneNumberController,
                     decoration: InputDecoration(labelText: 'Phone Number'),
                     keyboardType: TextInputType.phone,
+                  ),
+                  TextField(
+                    controller: _schoolNameController,
+                    decoration: InputDecoration(labelText: 'School Name'),
                   ),
                   SizedBox(height: 20),
                   _isLoading
                       ? CircularProgressIndicator()
                       : ElevatedButton(
                           onPressed: _uploadProfile,
-                          child: Text('Create Profile'),
+                          child: Text('Submit'),
                         ),
                 ],
               ),
@@ -136,47 +191,8 @@ class _CoordinatorProfileState extends State<CoordinatorProfile> {
   void dispose() {
     _nameController.dispose();
     _phoneNumberController.dispose();
+    _emailController.dispose();
+    _schoolNameController.dispose();
     super.dispose();
   }
-}
-
-Widget greenIntroWidgetWithoutLogos({String title = "Profile Settings", String? subtitle}) {
-  return Container(
-    width: Get.width,
-    decoration: BoxDecoration(
-      image: DecorationImage(
-        image: AssetImage('assets/mask.png'),
-        fit: BoxFit.fill,
-      ),
-    ),
-    height: Get.height * 0.3,
-    child: Container(
-      height: Get.height * 0.1,
-      width: Get.width,
-      margin: EdgeInsets.only(bottom: Get.height * 0.05),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          if (subtitle != null)
-            Text(
-              subtitle,
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-              ),
-            ),
-        ],
-      ),
-    ),
-  );
 }
