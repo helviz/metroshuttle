@@ -1,8 +1,8 @@
-Metro-shuttle Flutter Application
-Overview
+#Metro-shuttle Flutter Application
+#Overview
 Metro-shuttle is a children's transportation application designed to make commutes safer and more reliable. The app offers real-time tracking, instant notifications, and secure check-in/check-out processes, ensuring parents are well-informed about their child's transportation status. Metro-shuttle addresses the concerns of parents by providing a comprehensive solution for monitoring and managing their children's transportation, ultimately reducing anxiety and enhancing safety.
 
-Project Goals
+#Project Goals
 The primary goals of Metro-shuttle include:
 
 Enhance Safety: Implement secure check-in and check-out methods to ensure children are only picked up and dropped off by authorized personnel.
@@ -39,4 +39,4 @@ Performance Enhancements: Ongoing optimizations to ensure the app runs smoothly 
 Feature Expansion: Introduction of new features based on user feedback to continuously improve the user experience.
 Scalability: Efforts to expand the app's reach to more users and regions, ensuring safe and reliable transportation for a growing number of families.
 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+
