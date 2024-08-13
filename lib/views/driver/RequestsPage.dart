@@ -77,26 +77,26 @@ class _RequestsPageState extends State<RequestsPage> {
                                             fontSize: 24, color: Colors.red),
                                       ).animate().fadeIn(duration: 600.ms),
                                       SizedBox(height: 20),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TasksPage()),
-                                          );
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12.0, horizontal: 24.0),
-                                          child: Text('Tasks',
-                                              style: GoogleFonts.lato(
-                                                  fontSize: 18)),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          minimumSize: Size(150, 50),
-                                        ),
-                                      ),
+                                      // ElevatedButton(
+                                      //   onPressed: () {
+                                      //     Navigator.push(
+                                      //       context,
+                                      //       MaterialPageRoute(
+                                      //           builder: (context) =>
+                                      //               TasksPage()),
+                                      //     );
+                                      //   },
+                                      //   child: Padding(
+                                      //     padding: const EdgeInsets.symmetric(
+                                      //         vertical: 12.0, horizontal: 24.0),
+                                      //     child: Text('Tasks',
+                                      //         style: GoogleFonts.lato(
+                                      //             fontSize: 18)),
+                                      //   ),
+                                      //   style: ElevatedButton.styleFrom(
+                                      //     minimumSize: Size(150, 50),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 )
@@ -115,25 +115,25 @@ class _RequestsPageState extends State<RequestsPage> {
                                   },
                                 ),
                         ),
-                        if (requests.isNotEmpty)
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TasksPage()),
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 12.0, horizontal: 24.0),
-                              child: Text('Tasks',
-                                  style: GoogleFonts.lato(fontSize: 18)),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: Size(150, 50),
-                            ),
-                          ),
+                        // if (requests.isNotEmpty)
+                        //   ElevatedButton(
+                        //     onPressed: () {
+                        //       Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //             builder: (context) => TasksPage()),
+                        //       );
+                        //     },
+                        //     child: Padding(
+                        //       padding: const EdgeInsets.symmetric(
+                        //           vertical: 12.0, horizontal: 24.0),
+                        //       child: Text('Tasks',
+                        //           style: GoogleFonts.lato(fontSize: 18)),
+                        //     ),
+                        //     style: ElevatedButton.styleFrom(
+                        //       minimumSize: Size(150, 50),
+                        //     ),
+                        //   ),
                       ],
                     );
                   }

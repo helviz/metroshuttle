@@ -27,10 +27,8 @@ class _ChildArrivalTableState extends State<ChildArrivalTable> {
     }
 
     String userId = currentUser.uid;
-    DocumentSnapshot coordinatorDoc = await FirebaseFirestore.instance
-        .collection('coordinators')
-        .doc(userId)
-        .get();
+    DocumentSnapshot coordinatorDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
     if (coordinatorDoc.exists && coordinatorDoc['schoolName'] != null) {
       String schoolName = coordinatorDoc['schoolName'];
@@ -54,7 +52,8 @@ class _ChildArrivalTableState extends State<ChildArrivalTable> {
         .where('request', isEqualTo: true)
         .get();
 
-    print('Children Snapshot Docs: ${childrenSnapshot.docs.length}'); // Debug print
+    print(
+        'Children Snapshot Docs: ${childrenSnapshot.docs.length}'); // Debug print
 
     List<Map<String, String>> childrenDetails = [];
 
@@ -76,7 +75,8 @@ class _ChildArrivalTableState extends State<ChildArrivalTable> {
           String? carRegistrationNumber = driverDoc['vehicleRegistration'];
 
           if (driverName != null && carRegistrationNumber != null) {
-            print('Driver Name: $driverName, Car Registration Number: $carRegistrationNumber'); // Debug print
+            print(
+                'Driver Name: $driverName, Car Registration Number: $carRegistrationNumber'); // Debug print
 
             childrenDetails.add({
               'childName': childName,
@@ -106,13 +106,12 @@ class _ChildArrivalTableState extends State<ChildArrivalTable> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             print('No data found'); // Debug print
             return const Center(
-                            child: Text(
-                              'No data found',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey,
-                              )));
+                child: Text('No data found',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    )));
           } else {
             List<Map<String, String>> data = snapshot.data!;
             return SingleChildScrollView(
@@ -137,8 +136,10 @@ class _ChildArrivalTableState extends State<ChildArrivalTable> {
                         DataCell(Text(entry['childName']!)),
                         DataCell(Text(entry['driverName']!)),
                         DataCell(Text(entry['carRegistrationNumber']!)),
-                        DataCell(ArrivalCheckbox(entry['parentId']!, entry['childName']!)),
-                        DataCell(DepartureCheckbox(entry['parentId']!, entry['childName']!)),
+                        DataCell(ArrivalCheckbox(
+                            entry['parentId']!, entry['childName']!)),
+                        DataCell(DepartureCheckbox(
+                            entry['parentId']!, entry['childName']!)),
                       ]);
                     }).toList(),
                   ),
@@ -204,9 +205,11 @@ class _ArrivalCheckboxState extends State<ArrivalCheckbox> {
   }
 
   Future<void> sendArrivedMessage() async {
-    String currentTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    String currentTime =
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
     try {
-      await sendNotification(widget.parentId, 'ARRIVED', '${widget.childName} has arrived at school at $currentTime');
+      await sendNotification(widget.parentId, 'ARRIVED',
+          '${widget.childName} has arrived at school at $currentTime');
     } catch (error) {
       // Handle error
     }
@@ -283,9 +286,11 @@ class _DepartureCheckboxState extends State<DepartureCheckbox> {
   }
 
   Future<void> sendDepartedMessage() async {
-    String currentTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    String currentTime =
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
     try {
-      await sendNotification(widget.parentId, 'DEPARTED', '${widget.childName} has left the school at $currentTime');
+      await sendNotification(widget.parentId, 'DEPARTED',
+          '${widget.childName} has left the school at $currentTime');
     } catch (error) {
       // Handle error
     }

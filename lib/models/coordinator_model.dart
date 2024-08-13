@@ -1,30 +1,39 @@
-// Coordinator model
-class Coordinator {
-  String id;
+class COORDINATOR {
   String name;
   String email;
   String telephoneNumber;
   String schoolName;
+  String imageUrl;
+  String userType;
 
-  Coordinator({required this.id, required this.name, required this.email, required this.telephoneNumber, required this.schoolName});
+  COORDINATOR({
+    required this.name,
+    required this.email,
+    required this.telephoneNumber,
+    required this.schoolName,
+    required this.imageUrl,
+    required this.userType,
+  });
 
-  factory Coordinator.fromMap(Map<String, dynamic> map) {
-    return Coordinator(
-      id: map['id'],
+  factory COORDINATOR.fromMap(Map<String, dynamic> map) {
+    return COORDINATOR(
       name: map['name'],
       email: map['email'],
       telephoneNumber: map['telephoneNumber'],
       schoolName: map['schoolName'],
+      imageUrl: map['imageUrl'],
+      userType: map['userType'],
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'name': name,
       'email': email,
       'telephoneNumber': telephoneNumber,
       'schoolName': schoolName,
+      'imageUrl': imageUrl,
+      'userType': userType,
     };
   }
 }

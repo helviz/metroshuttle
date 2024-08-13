@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:metroshuttle/views/coordinator/attendance.dart';
+import 'package:metroshuttle/views/coordinator/coordinator_profile.dart';
 import 'package:metroshuttle/views/decision_screen/decission_screen.dart';
 import 'package:metroshuttle/views/my_profile.dart';
 
@@ -130,7 +131,7 @@ class _CoordinatorSidePanelState extends State<CoordinatorSidePanel> {
             leading: Icon(Icons.person),
             title: Text('Profile'),
             onTap: () {
-              Get.to(() => ProfilePage());
+              Get.to(() => CoordinatorProfile(userId: widget.userId));
             },
           ),
           ListTile(

@@ -15,12 +15,11 @@ import 'package:metroshuttle/models/user_model/user_model.dart';
 import 'package:metroshuttle/views/coordinator/coordinator_homescreen.dart';
 import 'package:metroshuttle/views/coordinator/coordinator_profile.dart';
 import 'package:metroshuttle/views/driver/driverhome.dart';
-// import 'package:metroshuttle/views/driver/car_registration/car_registration_template.dart';
-// import 'package:metroshuttle/views/home.dart';
+
 import 'package:metroshuttle/views/parent/parent_homescreen.dart';
 import 'package:metroshuttle/views/profile_settings.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-// import 'package:metroshuttle/views/profile_settings.dart';
+
 import 'package:path/path.dart' as Path;
 
 import '../utils/app_constants.dart';
@@ -52,24 +51,28 @@ class AuthController extends GetxController {
   RxList userCards = [].obs;
 
   Future<void> storeOneSignalPlayerId() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      String? playerId = await OneSignal.shared.getDeviceState().then((deviceState) {
-        return deviceState?.userId;
-      });
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String? playerId =
+            await OneSignal.shared.getDeviceState().then((deviceState) {
+          return deviceState?.userId;
+        });
 
-      if (playerId != null) {
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'oneSignalPlayerId': playerId,
-        }, SetOptions(merge: true));
+        if (playerId != null) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'oneSignalPlayerId': playerId,
+          }, SetOptions(merge: true));
+        }
       }
+    } catch (e) {
+      // Handle errors here
+      print('Error storing OneSignal player ID: $e');
     }
-  } catch (e) {
-    // Handle errors here
-    print('Error storing OneSignal player ID: $e');
   }
-}
 
   phoneAuth(String phone) async {
     try {
@@ -118,49 +121,55 @@ class AuthController extends GetxController {
   var isDecided = false;
 
   void decideRoute() {
-    if (isDecided) {
-      return;
-    }
+    if (isDecided) return;
+
     isDecided = true;
     print("called");
 
-    // Step 1: Check user login
+    // Step 1: Check if the user is logged in
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
       String userId = user.uid; // Get the user ID
 
-      // Step 2: Check whether user profile exists
+      // Step 2: Fetch the user profile and determine the route
       FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .get()
           .then((value) async {
-        // Store the device token after confirming the user's profile
-        await storeOneSignalPlayerId();
+        await storeOneSignalPlayerId(); // Store the device token after confirming the user's profile
 
-        if (isLoginAsDriver) {
-          if (value.exists) {
-            Get.offAll(() => DriverHomeScreen(userId: userId));
-          } else {
+        if (value.exists) {
+          final String userType = value.data()?['userType'] ?? '';
+
+          switch (userType) {
+            case 'driver':
+              Get.offAll(() => DriverHomeScreen(userId: userId));
+              break;
+            case 'user':
+              Get.offAll(() => ParentHomeScreen(userId: userId));
+              break;
+            case 'coordinator':
+              Get.offAll(() => CoordinatorHomeScreen(userId: userId));
+              break;
+            default:
+              print('Unknown user type: $userType');
+          }
+        } else {
+          if (isLoginAsDriver) {
             Get.offAll(() => DriverProfileSetup(userId: userId));
-          }
-        } else if (isLoginAsUser) {
-          if (value.exists) {
-            Get.offAll(() => ParentHomeScreen(userId: userId));
-          } else {
+          } else if (isLoginAsUser) {
             Get.offAll(() => ProfileSettingScreen());
-          }
-        } else if (isLoginAsCoordinator) {
-          if (value.exists) {
-            Get.offAll(() => CoordinatorHomeScreen(userId: userId));
-          } else {
-            Get.offAll(() => CoordinatorProfile());
+          } else if (isLoginAsCoordinator) {
+            Get.offAll(() => CoordinatorProfile(userId: userId));
           }
         }
       }).catchError((e) {
-        print("Error while decideRoute is $e");
+        print("Error in decideRoute: $e");
       });
+    } else {
+      print('User is not logged in');
     }
   }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
 
 import 'package:metroshuttle/views/driver/driverhome.dart';
 
@@ -21,8 +24,48 @@ class _DriverProfileSetupState extends State<DriverProfileSetup> {
   String _selectedRegion = 'Kawempe';
   final List<String> _regions = ['Central', 'Kawempe', 'Nakawa', 'Lubaga', 'Makindye'];
   final List<TextEditingController> _schoolControllers = [TextEditingController()];
-
+  
+  File? _imageFile;
   bool _isSubmitting = false;
+  bool _isEditMode = false; // Flag to check if we are in edit mode
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfProfileExists();
+  }
+
+  Future<void> _checkIfProfileExists() async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
+    if (userDoc.exists) {
+      setState(() {
+        _isEditMode = true;
+        _driverNameController.text = userDoc['driverName'] ?? '';
+        _phoneNumberController.text = userDoc['phoneNumber'] ?? '';
+        _vehicleRegistrationController.text = userDoc['vehicleRegistration'] ?? '';
+        _selectedRegion = userDoc['region'] ?? 'Kawempe';
+        List<String> schools = List<String>.from(userDoc['schools'] ?? []);
+        
+        if (schools.isNotEmpty) {
+          _schoolControllers.clear();
+          for (var school in schools) {
+            _schoolControllers.add(TextEditingController(text: school));
+          }
+        }
+      });
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
 
   void _addSchoolField() {
     setState(() {
@@ -44,23 +87,51 @@ class _DriverProfileSetupState extends State<DriverProfileSetup> {
         _isSubmitting = true;
       });
 
-      // Extract data from form fields
-      String driverName = _driverNameController.text;
-      String phoneNumber = _phoneNumberController.text;
-      String vehicleRegistration = _vehicleRegistrationController.text;
-      List<String> schools = _schoolControllers.map((controller) => controller.text).toList();
+      try {
+        // Upload image to Firebase Storage if it exists
+        String? imageUrl;
+        if (_imageFile != null) {
+          final storageRef = FirebaseStorage.instance
+              .ref()
+              .child('profile_pictures')
+              .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+          await storageRef.putFile(_imageFile!);
+          imageUrl = await storageRef.getDownloadURL();
+        }
 
-      // Save data to Firestore
-      await FirebaseFirestore.instance.collection('users').doc(widget.userId).set({
-        'driverName': driverName,
-        'phoneNumber': phoneNumber,
-        'vehicleRegistration': vehicleRegistration,
-        'region': _selectedRegion,
-        'schools': schools,
-      });
+        // Extract data from form fields
+        String driverName = _driverNameController.text;
+        String phoneNumber = _phoneNumberController.text;
+        String vehicleRegistration = _vehicleRegistrationController.text;
+        List<String> schools =
+            _schoolControllers.map((controller) => controller.text).toList();
 
-      // Navigate to DriverHomeScreen
-      Get.offAll(() => DriverHomeScreen(userId: widget.userId));
+        // Save or update data in Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(widget.userId)
+            .set({
+          'driverName': driverName,
+          'phoneNumber': phoneNumber,
+          'vehicleRegistration': vehicleRegistration,
+          'region': _selectedRegion,
+          'schools': schools,
+          if (imageUrl != null)
+            'imageUrl': imageUrl, // Only save imageUrl if it exists
+          'userType': 'driver'
+        }, SetOptions(merge: true)); // Merge data if updating
+
+        // Navigate to DriverHomeScreen
+        Get.offAll(() => DriverHomeScreen(userId: widget.userId));
+      } catch (e) {
+        Get.snackbar('Error', 'Failed to save profile!');
+      } finally {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    } else {
+      Get.snackbar('Error', 'All fields are required!');
     }
   }
 
@@ -68,7 +139,7 @@ class _DriverProfileSetupState extends State<DriverProfileSetup> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Driver Profile Setup'),
+        title: Text(_isEditMode ? 'Edit Driver Profile' : 'Driver Profile Setup'),
         backgroundColor: Colors.green,
       ),
       body: Center(
@@ -95,6 +166,23 @@ class _DriverProfileSetupState extends State<DriverProfileSetup> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Center(
+                    child: _imageFile != null
+                        ? CircleAvatar(
+                            radius: 50,
+                            backgroundImage: FileImage(_imageFile!),
+                          )
+                        : CircleAvatar(
+                            radius: 50,
+                            child: Icon(Icons.person, size: 50),
+                          ),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _pickImage,
+                    child: Text('Upload Profile Picture'),
+                  ),
+                  SizedBox(height: 20),
                   _buildTextField(
                     controller: _driverNameController,
                     labelText: 'Driver Name',
@@ -182,7 +270,7 @@ class _DriverProfileSetupState extends State<DriverProfileSetup> {
                     label: Text('Add Another School'),
                     onPressed: _addSchoolField,
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 16),
                   AnimatedOpacity(
                     opacity: _isSubmitting ? 0.5 : 1.0,
                     duration: Duration(milliseconds: 500),
@@ -190,7 +278,7 @@ class _DriverProfileSetupState extends State<DriverProfileSetup> {
                       onPressed: _isSubmitting ? null : _submit,
                       child: _isSubmitting
                           ? CircularProgressIndicator(color: Colors.white)
-                          : Text('Submit'),
+                          : Text(_isEditMode ? 'Update Profile' : 'Submit'),
                     ),
                   ),
                 ],

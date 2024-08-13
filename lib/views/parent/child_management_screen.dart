@@ -16,10 +16,14 @@ class ChildManagementScreen extends StatefulWidget {
 class _ChildManagementScreenState extends State<ChildManagementScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _homeAddressController = TextEditingController();
+  final _schoolAddressController = TextEditingController();
   LatLng? _pickupLocation;
   LatLng? _destinationLocation;
   String? _selectedRegion;
+  String? _selectedSchoolAddress;
   final List<String> _regions = ['Central', 'Kawempe', 'Nakawa', 'Lubaga', 'Makindye'];
+  List<String> _schoolAddresses = [];
   DateTime? _startDate;
   DateTime? _endDate;
   bool _isLoading = false;
@@ -27,9 +31,28 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
   bool _isDestinationPinned = false;
 
   @override
+  void initState() {
+    super.initState();
+    _fetchSchoolAddresses();
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
+    _homeAddressController.dispose();
+    _schoolAddressController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchSchoolAddresses() async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('userType', isEqualTo: 'coordinator')
+        .get();
+
+    setState(() {
+      _schoolAddresses = querySnapshot.docs.map((doc) => doc['schoolName'] as String).toList();
+    });
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
@@ -71,6 +94,9 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
       }
       final userId = user.uid;
 
+      // Use the selected school address if available, otherwise use the entered address
+      final schoolAddress = _selectedSchoolAddress ?? _schoolAddressController.text;
+
       final child = Child(
         userId: userId,
         name: _nameController.text,
@@ -79,6 +105,8 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
         region: _selectedRegion!,
         startDate: _startDate!,
         endDate: _endDate!,
+        homeAddress: _homeAddressController.text,
+        schoolAddress: schoolAddress,
       );
 
       // Save child to Firestore and retrieve document ID
@@ -94,7 +122,7 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
       );
 
       // Navigate to DriverSelectionScreen with document ID
-      Get.to(() => DriverSelectionScreen(docId: docId, userId: userId,));
+      Get.to(() => DriverSelectionScreen(docId: docId, userId: userId));
 
       setState(() {
         _isLoading = false;
@@ -108,10 +136,13 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
 
   void _resetForm() {
     _nameController.clear();
+    _homeAddressController.clear();
+    _schoolAddressController.clear();
     setState(() {
       _pickupLocation = null;
       _destinationLocation = null;
       _selectedRegion = null;
+      _selectedSchoolAddress = null;
       _startDate = null;
       _endDate = null;
       _isPickupPinned = false;
@@ -156,11 +187,14 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 _buildTextField(_nameController, 'Child\'s Name'),
-                _buildLocationPicker('Pick-up Location', true, _isPickupPinned),
-                _buildLocationPicker('Destination Location', false, _isDestinationPinned),
+                _buildTextField(_homeAddressController, 'Home Address'),
+                _buildLocationPicker('HOME', true, _isPickupPinned),
+                _buildSchoolAddressField(),
+                _buildLocationPicker('SCHOOl', false, _isDestinationPinned),
                 _buildDropdownField(),
                 _buildDateField('Start Date', _startDate, true),
                 _buildDateField('End Date', _endDate, false),
+                
                 SizedBox(height: 20),
                 _isLoading
                     ? Center(child: CircularProgressIndicator())
@@ -251,18 +285,72 @@ class _ChildManagementScreenState extends State<ChildManagementScreen> {
     );
   }
 
-  Widget _buildDateField(String label, DateTime? date, bool isStartDate) {
+  Widget _buildSchoolAddressField() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            labelText: 'Select School Address',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          value: _selectedSchoolAddress,
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedSchoolAddress = newValue;
+            });
+          },
+          items: _schoolAddresses.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+        Text('OR'),
+        TextField(
+          controller: _schoolAddressController,
+          decoration: InputDecoration(
+            labelText: 'Enter School Address',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
+  Widget _buildDateField(String labelText, DateTime? date, bool isStartDate) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(fontSize: 16)),
-          TextButton(
-            onPressed: () => _selectDate(context, isStartDate),
-            child: Text(date != null ? DateFormat('yyyy-MM-dd').format(date) : 'Select Date'),
+      child: GestureDetector(
+        onTap: () => _selectDate(context, isStartDate),
+        child: AbsorbPointer(
+          child: TextFormField(
+            decoration: InputDecoration(
+              labelText: labelText,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            controller: TextEditingController(
+              text: date != null ? DateFormat('yyyy-MM-dd').format(date) : '',
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select $labelText';
+              }
+              return null;
+            },
           ),
-        ],
+        ),
       ),
     );
   }

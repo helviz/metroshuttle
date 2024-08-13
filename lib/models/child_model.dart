@@ -6,9 +6,11 @@ class Child {
   final String region;
   final DateTime startDate;
   final DateTime endDate;
-  final String? driver; // Nullable field
-  final bool? request;   // Nullable field
-
+  final String? driver;
+  final bool? request;
+  final String? homeAddress; 
+  final String? schoolAddress; 
+  
   Child({
     required this.userId,
     required this.name,
@@ -19,6 +21,8 @@ class Child {
     required this.endDate,
     this.driver,
     this.request,
+    this.homeAddress,
+    this.schoolAddress,
   });
 
   // Convert a Child object into a Map object
@@ -33,6 +37,8 @@ class Child {
       'endDate': endDate.toIso8601String(),
       'driver': driver,
       'request': request,
+      'homeAddress': homeAddress,
+      'schoolAddress': schoolAddress,
     };
   }
 
@@ -48,6 +54,8 @@ class Child {
       endDate: DateTime.parse(map['endDate']),
       driver: map['driver'],
       request: map['request'],
+      homeAddress: map['homeAddress'],
+      schoolAddress: map['schoolAddress'],
     );
   }
 }
